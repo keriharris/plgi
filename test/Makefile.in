@@ -1,0 +1,127 @@
+########################################################################
+#  This file is part of PLGI.
+#
+#   Copyright (C) 2015 Keri Harris <keri@gentoo.org>
+#
+#   PLGI is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1
+#   of the License, or (at your option) any later version.
+#
+#   PLGI is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with PLGI.  If not, see <http://www.gnu.org/licenses/>.
+#
+########################################################################
+
+QUIET_CC= @echo "   [CC]      $@" 1>&2;
+QUIET_LD= @echo "   [LD]      $@" 1>&2;
+QUIET_COPY= @echo "   [COPY]    $@" 1>&2;
+QUIET_GEN= @echo "   [GEN]     $@" 1>&2;
+
+CFLAGS+= -Wall -I. @SWI_CFLAGS@ @GI_CFLAGS@ -D_GI_DISABLE_CAIRO
+LDFLAGS= -Wall -shared @GI_LIBS@
+
+CC=@CC@
+
+SWIPL=@SWI_BASE@/bin/@SWI_ARCH@/swipl
+
+GI_DATADIR= @GI_DATADIR@
+
+TYPELIBS= NamespaceTests-1.0.typelib \
+     Everything-1.0.typelib \
+     GIMarshallingTests-1.0.typelib \
+     CallbackTests-1.0.typelib \
+     SignalTests-1.0.typelib \
+     Regress-1.0.typelib
+
+# Namespace Tests
+NamespaceTests-1.0.typelib: NamespaceTests-1.0.gir
+	$(QUIET_GEN)g-ir-compiler $^ -o $@
+
+NamespaceTests-1.0.gir: libnamespacetests-1.0.so
+	$(QUIET_GEN)CC=$(CC) g-ir-scanner --warn-all --quiet --namespace=NamespaceTests --nsversion=1.0 --no-libtool --include=Gio-2.0 --library=namespacetests-1.0 --output=$@ namespacetests.h namespacetests.c
+
+libnamespacetests-1.0.so: namespacetests.o
+	$(QUIET_LD)$(CC) -o $@ $^ $(LDFLAGS)
+
+# Parameter Passing Tests
+Everything-1.0.typelib: Everything-1.0.gir
+	$(QUIET_GEN)g-ir-compiler $^ -o $@
+
+Everything-1.0.gir: libeverything-1.0.so
+	$(QUIET_GEN)CC=$(CC) g-ir-scanner --warn-all --quiet --namespace=Everything --nsversion=1.0 --no-libtool --include=Gio-2.0 --library=everything-1.0 --output=$@ everything.h everything.c
+
+libeverything-1.0.so: everything.o
+	$(QUIET_LD)$(CC) -o $@ $^ $(LDFLAGS)
+
+everything.c: everything.h
+	$(QUIET_COPY)cp $(GI_DATADIR)/tests/everything.c $@
+
+everything.h:
+	$(QUIET_COPY)cp $(GI_DATADIR)/tests/everything.h $@
+
+# GI Marshalling Tests
+GIMarshallingTests-1.0.typelib: GIMarshallingTests-1.0.gir
+	$(QUIET_GEN)g-ir-compiler $^ -o $@
+
+GIMarshallingTests-1.0.gir: libgimarshallingtests-1.0.so
+	$(QUIET_GEN)CC=$(CC) g-ir-scanner --warn-all --quiet --namespace=GIMarshallingTests --nsversion=1.0 --symbol-prefix=gi_marshalling_tests --no-libtool --include=Gio-2.0 --library=gimarshallingtests-1.0 --output=$@ gimarshallingtests.h gimarshallingtests.c
+
+libgimarshallingtests-1.0.so: gimarshallingtests.o
+	$(QUIET_LD)$(CC) -o $@ $^ $(LDFLAGS)
+
+gimarshallingtests.c: gimarshallingtests.h
+	$(QUIET_COPY)cp $(GI_DATADIR)/tests/gimarshallingtests.c $@
+
+gimarshallingtests.h:
+	$(QUIET_COPY)cp $(GI_DATADIR)/tests/gimarshallingtests.h $@
+
+# Callback Tests
+CallbackTests-1.0.typelib: CallbackTests-1.0.gir
+	$(QUIET_GEN)g-ir-compiler $^ -o $@
+
+CallbackTests-1.0.gir: libcallbacktests-1.0.so
+	$(QUIET_GEN)CC=$(CC) g-ir-scanner --warn-all --quiet --namespace=CallbackTests --nsversion=1.0 --no-libtool --include=Gio-2.0 --library=callbacktests-1.0 --output=$@ callbacktests.h callbacktests.c
+
+libcallbacktests-1.0.so: callbacktests.o
+	$(QUIET_LD)$(CC) -o $@ $^ $(LDFLAGS)
+
+# Signal Tests
+SignalTests-1.0.typelib: SignalTests-1.0.gir
+	$(QUIET_GEN)g-ir-compiler $^ -o $@
+
+SignalTests-1.0.gir: libsignaltests-1.0.so
+	$(QUIET_GEN)CC=$(CC) g-ir-scanner --warn-all --quiet --namespace=SignalTests --nsversion=1.0 --no-libtool --include=Gio-2.0 --library=signaltests-1.0 --output=$@ signaltests.h signaltests.c
+
+libsignaltests-1.0.so: signaltests.o
+	$(QUIET_LD)gcc -o $@ $^ $(LDFLAGS)
+
+# Regress Tests
+Regress-1.0.typelib: Regress-1.0.gir
+	$(QUIET_GEN)g-ir-compiler $^ -o $@
+
+Regress-1.0.gir: libregresstests-1.0.so
+	$(QUIET_GEN)CC=$(CC) g-ir-scanner --warn-all --quiet --namespace=Regress --nsversion=1.0 --no-libtool --include=Gio-2.0 --library=regresstests-1.0 --output=$@ -D _GI_DISABLE_CAIRO regress.h regress.c
+
+libregresstests-1.0.so: regress.o
+	$(QUIET_LD)$(CC) -o $@ $^ $(LDFLAGS)
+
+regress.c: regress.h
+	$(QUIET_COPY)cp $(GI_DATADIR)/tests/regress.c $@
+
+regress.h:
+	$(QUIET_COPY)cp $(GI_DATADIR)/tests/regress.h $@
+
+.c.o:
+	$(QUIET_CC)$(CC) $(CFLAGS) -o $@ -c $^
+
+check: $(TYPELIBS)
+	LD_LIBRARY_PATH=. $(SWIPL) -f test.pl -g "run_tests,halt" -t "halt(0)"
+
+clean:
+	rm -f *.o *.so *.gir *.typelib

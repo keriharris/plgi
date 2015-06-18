@@ -1,0 +1,46 @@
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT(src/plgi.h)
+AC_PREREQ([2.50])
+AC_CONFIG_HEADER(src/config.h)
+
+AC_SUBST(CC)
+AC_SUBST(SWI_CFLAGS)
+AC_SUBST(SWI_LIBS)
+AC_SUBST(SWI_BASE)
+AC_SUBST(SWI_ARCH)
+AC_SUBST(SWI_SOLIBDIR)
+AC_SUBST(SWI_PLLIBDIR)
+AC_SUBST(GI_CFLAGS)
+AC_SUBST(GI_LIBS)
+AC_SUBST(GI_DATADIR)
+AC_SUBST(SOTARGET)
+AC_SUBST(PLTARGET)
+
+AC_PROG_INSTALL
+AC_PROG_CC([])
+
+AC_CHECK_SIZEOF(long)
+
+PKG_CHECK_MODULES(SWI,
+    swipl
+)
+
+SWI_BASE=$($PKG_CONFIG --variable=PLBASE swipl)
+SWI_ARCH=$($PKG_CONFIG --variable=PLARCH swipl)
+SWI_SOLIBDIR=$SWI_BASE/lib/$SWI_ARCH
+SWI_PLLIBDIR=$SWI_BASE/library
+
+PKG_CHECK_MODULES(GI,
+    glib-2.0
+    gio-2.0
+    gobject-2.0
+    gobject-introspection-1.0
+)
+
+GI_DATADIR=$($PKG_CONFIG --variable=gidatadir gobject-introspection-1.0)
+
+SOTARGET="plgi.$SO"
+PLTARGET=`echo $SOTARGET | sed "s/\.$SO/.pl/g"`
+
+AC_OUTPUT(Makefile src/Makefile test/Makefile)

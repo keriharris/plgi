@@ -1,0 +1,413 @@
+PLGI is a Prolog module that provides bindings to the entire GNOME software platform. GObject Introspection is used to dynamically generate Prolog predicates for C functions at runtime.
+
+Perhaps the most notable use for PLGI is to write Gtk+ applications in Prolog. The full Gtk+ widget set is supported, along with other useful features such as drag-and-drop, clipboard management, internationalized text etc. PLGI also supports Glade UI files.
+
+A number of short example programs exist in the plgi/examples directory highlighting some of the capabilities of PLGI.
+
+
+
+PLGI Namespaces
+===============
+
+PLGI predicates are generated at runtime by loading GObject Introspection typelib files. Each typelib file is specified by it's namespace. Common namespaces include 'Gtk', 'Gdk', 'GObject', 'GLib' etc. Namespaces are loaded in the following manner:
+
+* plgi_use_namespace(+Namespace)
+
+	plgi_use_namespace('Gtk')
+
+After loading a namespace, all functions, methods, objects, signals, structs, unions, enumerations and bitfields defined in that namespace are accessible from Prolog.
+
+Loading a namespace will cause all its dependency namespaces to also be loaded. e.g. loading the 'Gtk' namespace will cause the lower-level 'Gdk' namespace to be loaded. Thus when writing GTK+ applications it is usually sufficient to include a single call to plgi_use_namespace('Gtk').
+
+If typelib files exist in non-standard directories, they can be accessed in the following manner:
+
+* plgi_use_namespace_from_dir(+Namespace, +Directory)
+
+	plgi_use_namespace('Gtk', '/path/to/directory')
+
+plgi_use_namespace/1 should be used in much the same way that use_module/1 is used.
+
+
+
+PLGI Predicates
+===============
+
+PLGI predicate names always match their C counterparts; PLGI predicate arguments follow the same order as their C counterparts. For example:
+
+  C:
+	gtk_button_set_label(button, label)
+
+  Prolog:
+	%% gtk_button_set_label(+Button, +Label)
+	gtk_button_set_label(Button, Label)
+
+The return value from a C function is represented in Prolog as the last argument of the corresponding Prolog predicate. For example:
+
+  C:
+	gchar *label = gtk_button_get_label(button);
+
+  Prolog:
+	%% gtk_button_get_label(+Button, -Label)
+	gtk_button_get_label(Button, Label)
+
+Many C functions that take array arguments also require an explicit array_length argument. The corresponding Prolog predicate does not specify a list length argument; The PLGI layer will automatically work this out. For example:
+
+  C:
+	gchar* path_array[3] = { "/foo", "/bar", "/baz" };
+	gtk_icon_theme_set_search_path(icon_theme, path_array, 3);
+
+  Prolog:
+	Paths = ['/foo', '/bar', '/baz'],
+	gtk_icon_theme_set_search_path(IconTheme, Paths)
+
+Arguments that have an (inout) annotation are represented in Prolog by two arguments - one for the (in) component and one for the (out) component.
+
+  C:
+	// 'position' points to location text will be inserted at
+	gint position = ...;
+	...
+	gtk_editable_insert_text(editable, text, text_length, &position);
+	// 'position' has been updated by gtk_editable_insert_text()
+	// to point after inserted text
+
+  Prolog:
+	%% gtk_editable_insert_text(+Editable, +Text, +TextLength, +PositionIn, -PositionOut)
+	gtk_editable_insert_text(Editable, Text, TextLength, PositionIn, PositionOut)
+
+GError arguments in C functions do not have corresponding Prolog arguments in the respective Prolog predicates. Similarly, GError return types will not be represented as Prolog arguments. A non-NULL GError argument in a C function will raise an exception in the corresponding Prolog predicate. For example:
+
+  C:
+	GError *error;
+	retval = gtk_window_set_icon_from_file(window, "/path/to/file", &error);
+
+  Prolog:
+	catch(gtk_window_set_icon_from_file(Window, '/path/to/file', Retval),
+	      Error,
+	      ...)
+
+A special case is made for GError arguments that have an explicit (out) annotation. These will not raise a Prolog exception but are instead represented by Prolog terms. For example:
+
+  C:
+	GError *error;
+	retval = function_with_gerror_out_annotation(..., &error);
+
+  Prolog:
+	function_with_gerror_out_annotation(..., Error, Retval)
+
+
+
+PLGI Argument Types
+===================
+
+The following table lists the PLGI mapping between C types and Prolog types
+
+	C Type			Prolog Type
+	------			-----------
+
+	NULL			term:  {null}
+
+	gboolean		atom:  'true', 'false'
+	int8..int64		integer
+	uint8..uint64		integer
+
+	gfloat, gdouble		float
+
+	gchar*			atom
+	gunichar		utf8 character code
+
+	GType			atom
+
+	enum			atom
+	bitfield		list of atoms
+
+	C array			list
+	GArray			list
+	GPtrArray		list of atoms or opaque blobs
+	GByteArray		list of character codes
+	GBytes			list of character codes
+	GList			list
+	GSList			list
+
+	GHashTable		list of name-value pairs
+
+	struct			opaque blob
+	union			opaque blob
+	GBoxed			opaque blob
+	GObject			opaque blob
+
+	GCallback		predicate name
+	Signal			predicate name
+	Callback closure	term
+
+Note #1: GType arguments are represented in Prolog as atoms, specifying the name of the GType. For example:
+
+  C:
+	GtkWidget *ancestor = gtk_widget_get_ancestor(widget, GTK_TYPE_BUTTON);
+
+  Prolog:
+	gtk_widget_get_ancestor(Widget, 'GtkButton');
+
+Note #2: zero-terminated C arrays are represented in Prolog without their zero-terminated field. For example:
+
+  C:
+	gchar *values[] = { "foo", "bar", "baz", NULL };
+
+  Prolog:
+	Values = ['foo', 'bar', 'baz']
+
+
+
+GObject Types
+=============
+
+GObject types are represented in Prolog as opaque blobs.
+
+GObject types do not need to be explicitly ref-bumped (or ref-sinked) when created or accessed, and do not need to be unrefed when no longer needed. The PLGI layer will automatically manage reference counting for GObject types. This often makes dealing with GObject types a bit less unwieldly in Prolog than in C:
+
+  C:
+	GtkImage *image = gtk_image_new();
+	g_object_ref_sink(image);
+	...
+	g_object_unref(image);
+
+  Prolog:
+	gtk_image_new(Image),
+	...
+
+In the event that a GObject constructor is not introspectable, the convenience predicate g_object_new/3 can be used to create GObject types:
+
+* g_object_new(+ObjectType, +PropertyList, -Object)
+
+Create Object of type ObjectType with properties defined by PropertyList. PropertyList is specified as:
+
+	[PropertyName=PropertyValue, ..., PropertyNameN=PropertyValueN]
+
+This predicate is a wrapper around g_object_newv() but automatically translates Prolog property values into GValue+GParameter args. This predicate is of use if a C constructor is not introspectable, or GObject properties can only be set from a constructor. For example:
+
+	g_object_new('GtkMessageDialog', ['message-type'='GTK_MESSAGE_INFO', 'buttons'='GTK_BUTTONS_OK'], Dialog)
+
+Two convenience predicates exist for accessing GObject properties:
+
+* g_object_get_property(+Object, +PropertyName, -PropertyValue)
+* g_object_set_property(+Object, +PropertyName, +PropertyValue)
+
+These predicates are wrappers around g_object_get_property() and g_object_set_property() respectively but include code to automatically handle the GParamSpec and GValue plumbing.
+
+
+
+Struct Types
+============
+
+Structs are represented in Prolog as opaque blobs. To create structs or access fields of a struct, a number of convenience predicates have been implemented:
+
+* plgi_struct_new(+Term, -Struct)
+
+Create a struct blob from Term where the struct is specified as:
+
+	<struct_name>(Field1=Value1, ..., FieldN=ValueN)
+
+For example:
+
+	?- plgi_struct_new('GdkRGBA'(red=1.0, green=1.0, blue=1.0, alpha=1.0), Struct).
+	Struct = <GdkRGBA>(0x1f5cd00).
+
+It is permissible to use an incomplete initializer to leave trailing struct fields as NULL. For example:
+
+	?- plgi_struct_new('GdkRGBA'(red=1.0, green=1.0), Struct).
+	Struct = <GdkRGBA>(0x1f5cd00).
+
+	?- plgi_struct_new('GdkRGBA'(), Struct).
+	Struct = <GdkRGBA>(0x2ce4700).
+
+* plgi_struct_get_field(+Struct, +FieldName, -FieldValue)
+
+Retrieve the value of a field from a struct.
+
+	?- plgi_struct_new('GdkRGBA'(red=1.0, green=1.0, blue=1.0, alpha=1.0), Struct),
+	   plgi_struct_get_field(Struct, green, Value).
+	Struct = <GdkRGBA>(0x1f5cd00).
+	Value = 1.0.
+
+* plgi_struct_set_field(+Struct, +FieldName, +FieldValue)
+
+Set the value of a field in a struct.
+
+	?- plgi_struct_new('GdkRGBA'(red=1.0, green=1.0, blue=1.0, alpha=1.0), Struct),
+	   plgi_struct_set_field(Struct, green, 0.5).
+	   plgi_struct_get_field(Struct, green, Value).
+	Struct = <GdkRGBA>(0x1f5cd00).
+	Value = 0.5.
+
+* plgi_struct_term(+Struct, -Term)
+
+Convert a struct blob into a human-readable term.
+
+	?- plgi_struct_new('GdkRGBA'(red=1.0, green=1.0, blue=1.0, alpha=1.0), Struct),
+	   plgi_struct_term(Struct, Term).
+	Struct = <GdkRGBA>(0x1f5cd00).
+	Term = 'GdkRGBA'(red=1.0, green=1.0, blue=1.0, alpha=1.0).
+
+
+
+Union Types
+===========
+
+Unions are treated in much the same way as structs. They are represented in Prolog as opaque blobs, and a number of convenience predicates exists to create unions and access fields of a union:
+
+* plgi_union_new(+Term, -Union)
+
+Create a union blob from Term where the union is specified as:
+
+	<union_name>(Field=Value)
+
+For example:
+
+	?- plgi_union_new('SomeUnion'(intfield=7), Union).
+	Union = <SomeUnion>(0x1f5cd00).
+
+* plgi_union_get_field(+Union, +FieldName, -FieldValue)
+
+Retrieve the value of a field from a union.
+
+	?- plgi_union_new('SomeUnion'(intfield=7), Union).
+	   plgi_union_get_field(Union, intfield, IntValue),
+	   plgi_union_get_field(Union, floatfield, FloatValue).
+	Union = <SomeUnion>(0x1f5cd00),
+	IntValue = 7,
+	FloatValue = 7.0.
+
+* plgi_union_set_field(+Union, +FieldName, +FieldValue)
+
+Set the value of a field in a union.
+
+	?- plgi_union_new('SomeUnion'(intfield=7), Union).
+	   plgi_union_set_field(Union, intfield, 3).
+	   plgi_union_get_field(Union, intfield, Value).
+	Union = <SomeUnion>(0x1f5cd00),
+	Value = 3.
+
+
+
+GValue Types
+============
+
+A convenience predicate g_value_init/2 exists for initializing GValue types:
+
+* g_value_init(+GType, -GValue)
+
+  C:
+	GValue gvalue = { {0}, };
+	gvalue = g_value_init(gvalue, gint);
+
+  Prolog:
+	g_value_init(gint, GValue).
+
+
+
+Enumerated Types
+================
+
+C enumerated type values are represented in Prolog as atoms. i.e. the name of the enumeration constant is used in Prolog to specify the enumeration value. For example:
+
+  C:
+	GtkWindow *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+  Prolog:
+	gtk_window_new('GTK_WINDOW_TOPLEVEL', Window)
+
+A convenience predicate exists to convert an enum atom into it's equivalent integer value.
+
+* plgi_enum_value(+EnumName, -EnumValue)
+
+Retrieve the integer value corresponding to an enum atom.
+
+plgi_enum_value/2 is helpful in the rare case that a function returns an integer type but is often compared to well-known enum types. For example:
+
+	gtk_dialog_run(Dialog, ResponseId), % ResponseId is an integer
+	plgi_enum_value('GTK_RESPONSE_OK', OKId),
+	(   ResponseId == OKId
+	-> ...
+
+
+
+Bitfields
+=========
+
+C bitfield arguments are represented in Prolog as lists of enumerated values.
+
+  C:
+	gtk_calendar_set_display_options(calendar, GTK_CALENDAR_SHOW_HEADING |
+	                                           GTK_CALENDAR_SHOW_DAY_NAMES);
+
+  Prolog:
+	gtk_calendar_set_display_options(Calendar, ['GTK_CALENDAR_SHOW_HEADING',
+                                                   'GTK_CALENDAR_SHOW_DAY_NAMES'])
+
+
+
+Signals and Callbacks
+=====================
+
+GObject signal handlers and GCallback arguments are specified using name/arity syntax. Callback data passed to the handler is specified as a Prolog term. For example:
+
+  C:
+	void callback_func( GtkWidget *widget, gpointer data )
+	{ ...
+	}
+
+	some_func(...)
+	{ ...
+		g_signal_connect(GTK_OBJECT(window), "destroy",
+		                 GTK_SIGNAL_FUNC(callback_func), callback_data);
+	}
+
+  Prolog:
+	callback_func(Widget, Data) :-
+		...
+
+	some_func(...) :-
+		...
+		g_signal_connect(Window, 'destroy', callback_func/2, CallbackData)
+
+The callback signature may also include a module if the callback predicate is not exported:
+
+	g_signal_connect(Window, 'destroy', my_module:callback_func/2, CallbackData)
+
+GDestroyNotify arguments are not required in Prolog.
+
+  C:
+	gtk_combo_box_set_row_separator_func(combo_box, func, data, destroy_func);
+
+  Prolog:
+	gtk_combo_box_set_row_separator_func(ComboBox, func/4, Data)
+
+
+
+PLGI Limitations
+================
+
+There are a number of limitations with PLGI. While these limitations are not significant and do not prevent useful GTK+ code from being written, they are worth keeping in mind:
+
+* No custom GObject classes
+
+It is currently not possible to define and create new GObject classes from Prolog. Only those classes defined in existing namespaces may be used. It is however still possible to override the behaviour of existing classes by defining local predicates. For example:
+
+	:- module(my_custom_dialog, []).
+
+	%% gtk_dialog_new(-Dialog).
+	gtk_dialog_new(Dialog) :-
+		'Gtk':gtk_dialog_new(Dialog),
+		< custom code here that modifies Dialog to suit >
+		...
+
+* Not all GTK+ C functions are available
+
+Only those functions and methods defined in GObject Introspection typelib files are available from Prolog. There are a number of C functions that are unavailable from Prolog as they have been defined using C #define directives or have been explicitly marked as not introspectable.
+
+* Structs with void* fields can leak memory
+
+Arbitrary Prolog terms can be stored in a void* struct field using plgi_struct_new/2 or plgi_struct_set_field/3. If this struct becomes unused by the Gtk internals and goes out of scope in Prolog, then the struct will be freed from memory but the void* field data will not. If the struct has a short-lived lifetime, then it is recommended to manage this sort of term data in Prolog rather than using void* struct fields 
+
+* GTK+ constants are not supported
+
+Future PLGI work will include the addition of a helper predicate to convert a GTK+ constant name into its constant value.

@@ -1,0 +1,12 @@
+*.o
+*.so
+*.gir
+*.typelib
+Makefile
+everything.c
+everything.h
+gimarshallingtests.c
+gimarshallingtests.h
+regress.c
+regress.h
+

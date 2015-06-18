@@ -1,0 +1,59 @@
+########################################################################
+#  This file is part of PLGI.
+#
+#   Copyright (C) 2015 Keri Harris <keri@gentoo.org>
+#
+#   PLGI is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1
+#   of the License, or (at your option) any later version.
+#
+#   PLGI is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with PLGI.  If not, see <http://www.gnu.org/licenses/>.
+#
+########################################################################
+
+QUIET_CC= @echo "   [CC]      $@" 1>&2;
+QUIET_LD= @echo "   [LD]      $@" 1>&2;
+
+PROLOGDIR=../prolog
+SWI_SOLIBDIR=@SWI_SOLIBDIR@
+SWI_PLLIBDIR=@SWI_PLLIBDIR@
+
+CFLAGS+= -Wall -I. @SWI_CFLAGS@ @GI_CFLAGS@
+LDFLAGS= -Wall -shared @SWI_LIBS@ @GI_LIBS@
+
+CC=@CC@
+
+INSTALL=@INSTALL@
+INSTALL_PROGRAM=@INSTALL_PROGRAM@
+INSTALL_DATA=@INSTALL_DATA@
+
+OBJECTS= plgi.o plgi_argument.o plgi_array.o plgi_blob.o plgi_cache.o plgi_callback.o plgi_enum.o plgi_error.o plgi_flag.o plgi_gbytes.o plgi_ghashtable.o plgi_glist.o plgi_gstrv.o plgi_interface.o plgi_namespace.o plgi_object.o plgi_signal.o plgi_struct.o plgi_types.o plgi_union.o
+
+OVERRIDES= GLib.pl GObject.pl Gtk.pl
+
+all: plgi.so
+
+plgi.so: $(OBJECTS)
+	$(QUIET_LD)$(CC) -o $@ $^ $(LDFLAGS)
+
+.c.o:
+	$(QUIET_CC)$(CC) $(CFLAGS) -o $@ -c $^
+
+install: plgi.so
+	mkdir -p $(DESTDIR)$(SWI_SOLIBDIR)
+	$(INSTALL_PROGRAM) plgi.so $(DESTDIR)$(SWI_SOLIBDIR)
+	$(INSTALL_DATA) $(PROLOGDIR)/plgi.pl $(DESTDIR)$(SWI_PLLIBDIR)
+	mkdir -p $(DESTDIR)$(SWI_PLLIBDIR)/plgi
+	for f in $(OVERRIDES); do \
+	  $(INSTALL_DATA) $(PROLOGDIR)/overrides/$$f $(DESTDIR)$(SWI_PLLIBDIR)/plgi/; \
+	done
+
+clean:
+	rm -f *.o *.so
