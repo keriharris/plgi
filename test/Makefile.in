@@ -125,3 +125,6 @@ check: $(TYPELIBS)
 
 clean:
 	rm -f *.o *.so *.gir *.typelib
+
+distclean: clean
+	rm -f Makefile everything.c everything.h gimarshallingtests.c gimarshallingtests.h regress.c regress.h

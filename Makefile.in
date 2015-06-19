@@ -41,3 +41,9 @@ pack:
 clean:
 	(cd src && $(MAKE) clean)
 	(cd test && $(MAKE) clean)
+
+distclean:
+	(cd src && $(MAKE) distclean)
+	(cd test && $(MAKE) distclean)
+	rm -rf autom4te.cache
+	rm -f Makefile configure config.status config.log

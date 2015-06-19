@@ -57,3 +57,6 @@ install: plgi.so
 
 clean:
 	rm -f *.o *.so
+
+distclean: clean
+	rm -f Makefile config.h
