@@ -32,4 +32,4 @@
                callback_tests,
                signal_tests,
                regress_tests
-              ]).
+              ], [encoding(utf8)]).

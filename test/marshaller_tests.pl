@@ -2695,7 +2695,7 @@ test(gi_marshalling_tests_utf8_to_filename) :-
 	g_filename_from_utf8(Atom, -1, _, FilenameCodes),
 	assertion(FilenameCodes == [0x74, 0x65, 0x73, 0x74, 0xc3, 0xa4, 0xc3, 0xb8, 0x2e, 0x74, 0x78, 0x74]).
 
-test(gi_marshalling_tests_filename_in, [setup(mkdtemp(TempDir)), cleanup(rmtree(TempDir))]) :-
+test(gi_marshalling_tests_filename_in, [setup((setlocale(all, OldLocale, 'en_US.utf-8'), mkdtemp(TempDir))), cleanup((rmtree(TempDir), setlocale(all, _, OldLocale)))]) :-
 	format(atom(TestFile), '~w/testäø.txt', [TempDir]),
 	setup_call_cleanup(open(TestFile, write, OutStream),
 	                   format(OutStream, 'PLGI for SWI-Prolog', []),
@@ -2704,7 +2704,7 @@ test(gi_marshalling_tests_filename_in, [setup(mkdtemp(TempDir)), cleanup(rmtree(
 	assertion(Result == true),
 	assertion(atom_codes('PLGI for SWI-Prolog', Contents)).
 
-test(gi_marshalling_tests_filename_out) :-
+test(gi_marshalling_tests_filename_out, [setup(setlocale(all, OldLocale, 'en_US.utf-8')), cleanup(setlocale(all, _, OldLocale))]) :-
 	g_dir_make_tmp('testäø.XXXXXX', TempDir),
 	assertion(exists_directory(TempDir)),
 	(   assertion(sub_atom(TempDir, _, _, _, 'testäø.'))
