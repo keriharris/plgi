@@ -18,14 +18,6 @@
 #
 ########################################################################
 
-QUIET_CC= @echo "   [CC]      $@" 1>&2;
-QUIET_LD= @echo "   [LD]      $@" 1>&2;
-
-CFLAGS+= -Wall -I. @SWI_CFLAGS@ @GI_CFLAGS@
-LDFLAGS= -Wall -shared @SWI_LIBS@ @GI_LIBS@
-
-CC=@CC@
-
 all:
 	(cd src && $(MAKE) plgi.so)
 
