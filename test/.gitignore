@@ -7,6 +7,7 @@ everything.c
 everything.h
 gimarshallingtests.c
 gimarshallingtests.h
+gitestmacros.h
 regress.c
 regress.h
 

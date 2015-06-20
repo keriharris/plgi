@@ -62,7 +62,7 @@ libeverything-1.0.so: everything.o
 everything.c: everything.h
 	$(QUIET_COPY)cp $(GI_DATADIR)/tests/everything.c $@
 
-everything.h:
+everything.h: gitestmacros.h
 	$(QUIET_COPY)cp $(GI_DATADIR)/tests/everything.h $@
 
 # GI Marshalling Tests
@@ -78,7 +78,7 @@ libgimarshallingtests-1.0.so: gimarshallingtests.o
 gimarshallingtests.c: gimarshallingtests.h
 	$(QUIET_COPY)cp $(GI_DATADIR)/tests/gimarshallingtests.c $@
 
-gimarshallingtests.h:
+gimarshallingtests.h: gitestmacros.h
 	$(QUIET_COPY)cp $(GI_DATADIR)/tests/gimarshallingtests.h $@
 
 # Callback Tests
@@ -114,8 +114,16 @@ libregresstests-1.0.so: regress.o
 regress.c: regress.h
 	$(QUIET_COPY)cp $(GI_DATADIR)/tests/regress.c $@
 
-regress.h:
+regress.h: gitestmacros.h
 	$(QUIET_COPY)cp $(GI_DATADIR)/tests/regress.h $@
+
+# Common macro header
+gitestmacros.h:
+	@if test -f $(GI_DATADIR)/tests/gitestmacros.h; then \
+	    cp $(GI_DATADIR)/tests/gitestmacros.h $@; \
+	else \
+	    touch $@; \
+	fi
 
 .c.o:
 	$(QUIET_CC)$(CC) $(CFLAGS) -o $@ -c $^
@@ -127,4 +135,4 @@ clean:
 	rm -f *.o *.so *.gir *.typelib
 
 distclean: clean
-	rm -f Makefile everything.c everything.h gimarshallingtests.c gimarshallingtests.h regress.c regress.h
+	rm -f Makefile everything.c everything.h gimarshallingtests.c gimarshallingtests.h regress.c regress.h gitestmacros.h
