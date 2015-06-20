@@ -16,7 +16,12 @@ PLGI has the following requirements:
 * GObject Introspection >= 1.40 [3]
 * pkg-config [4]
 
-PLGI can be compiled and installed in the following manner:
+The easiest way to install PLGI is by using SWI-Prolog's package manager:
+
+	?- pack_install(plgi).
+	?- pack_rebuild(plgi).
+
+PLGI can also be compiled and installed directly from sources in the following manner:
 
 	% cd plgi-$VERSION
 	% autoconf
