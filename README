@@ -19,7 +19,6 @@ PLGI has the following requirements:
 The easiest way to install PLGI is by using SWI-Prolog's package manager:
 
 	?- pack_install(plgi).
-	?- pack_rebuild(plgi).
 
 PLGI can also be compiled and installed directly from sources in the following manner:
 
