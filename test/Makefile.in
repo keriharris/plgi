@@ -23,7 +23,7 @@ QUIET_LD= @echo "   [LD]      $@" 1>&2;
 QUIET_COPY= @echo "   [COPY]    $@" 1>&2;
 QUIET_GEN= @echo "   [GEN]     $@" 1>&2;
 
-CFLAGS+= -Wall -I. @SWI_CFLAGS@ @GI_CFLAGS@ -D_GI_DISABLE_CAIRO
+CFLAGS+= -Wall -I. -I../src @SWI_CFLAGS@ @GI_CFLAGS@ -D_GI_DISABLE_CAIRO
 LDFLAGS= -Wall -shared @GI_LIBS@
 
 CC=@CC@
