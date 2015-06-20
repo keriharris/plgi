@@ -6,6 +6,31 @@ A number of short example programs exist in the plgi/examples directory highligh
 
 
 
+Installation
+============
+
+PLGI has the following requirements:
+
+* SWI-Prolog >= 7.3.3 [1]
+* GLib-2.0 [2]
+* GObject Introspection >= 1.40 [3]
+* pkg-config [4]
+
+PLGI can be compiled and installed in the following manner:
+
+	% cd plgi-$VERSION
+	% autoconf
+	% ./configure
+	% make
+	% make install
+
+[1] http://www.swi-prolog.org/
+[2] https://wiki.gnome.org/Projects/GLib
+[3] https://wiki.gnome.org/Projects/GObjectIntrospection
+[4] http://www.freedesktop.org/wiki/Software/pkg-config/
+
+
+
 PLGI Namespaces
 ===============
 
