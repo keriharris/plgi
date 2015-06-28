@@ -94,6 +94,10 @@ gboolean fname ## __impl(term_t t0)
 #define FA3 t0+3
 #define FA4 t0+4
 #define FA5 t0+5
+#define FA6 t0+6
+#define FA6 t0+7
+#define FA6 t0+8
+#define FA6 t0+9
 
 
 
@@ -522,7 +526,7 @@ gboolean plgi_cache_object_info(PLGIObjectInfo *info);
 
 gboolean plgi_term_to_object(term_t t,
                              PLGIObjectArgInfo *object_info,
-                             gpointer *object)  PLGI_WARN_UNUSED;
+                             gpointer *object) PLGI_WARN_UNUSED;
 
 gboolean plgi_object_to_term(gpointer object,
                              PLGIObjectArgInfo *object_info,
