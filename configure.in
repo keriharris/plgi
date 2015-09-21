@@ -31,14 +31,6 @@ SWI_ARCH=$($PKG_CONFIG --variable=PLARCH swipl)
 SWI_SOLIBDIR=$SWI_BASE/lib/$SWI_ARCH
 SWI_PLLIBDIR=$SWI_BASE/library
 
-old_ldflags=$LDFLAGS
-LDFLAGS="$LDFLAGS $SWI_LIBS"
-AC_CHECK_LIB(swipl, PL_foreign_context_predicate)
-if test "$ac_cv_lib_swipl_PL_foreign_context_predicate" != "yes"; then
-    AC_MSG_ERROR([PL_foreign_context_predicate not found in libswipl. Your version of SWI-Prolog is too old to run PLGI. Please consider updating to a newer version.])
-fi
-LDFLAGS=$old_ldflags
-
 PKG_CHECK_MODULES(GI,
     glib-2.0
     gio-2.0
