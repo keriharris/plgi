@@ -95,9 +95,9 @@ gboolean fname ## __impl(term_t t0)
 #define FA4 t0+4
 #define FA5 t0+5
 #define FA6 t0+6
-#define FA6 t0+7
-#define FA6 t0+8
-#define FA6 t0+9
+#define FA7 t0+7
+#define FA8 t0+8
+#define FA9 t0+9
 
 
 
