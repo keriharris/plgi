@@ -35,7 +35,9 @@
                  plgi_union_get_field/3,
                  plgi_union_set_field/3,
 
-                 plgi_enum_value/2
+                 plgi_enum_value/2,
+
+                 plgi_debug/1
                 ]).
 
 :- use_foreign_library(foreign(plgi), install_plgi).

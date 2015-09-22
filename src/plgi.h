@@ -32,14 +32,15 @@
                  *            Debug            *
                  *******************************/
 
-#define DEBUG 0
+gboolean plgi_debug_active(void);
+int plgi_exit_debug(int status, void *arg);
 
 #define PLGI_debug_helper(fmt, ...) \
         { fprintf(stderr, "[PLGI] " fmt "%s\n", __VA_ARGS__); \
         }
 
 #define PLGI_debug(...) \
-        do { if (DEBUG) \
+        do { if (plgi_debug_active()) \
              { PLGI_debug_helper(__VA_ARGS__, ""); \
              } \
            } while (0)
@@ -98,6 +99,8 @@ gboolean fname ## __impl(term_t t0)
 #define FA7 t0+7
 #define FA8 t0+8
 #define FA9 t0+9
+
+PLGI_PRED_DEF(plgi_debug);
 
 
 

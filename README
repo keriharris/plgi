@@ -412,6 +412,45 @@ GDestroyNotify arguments are not required in Prolog.
 
 
 
+PLGI Debugging
+==============
+
+Some very low-level runtime debugging of PLGI can be accomplished using plgi_debug(+boolean). For example:
+
+	? gtk_button_new_with_label(foo, Button).
+	  B = <GtkButton>(0x1e92360).
+
+	? plgi_debug(true),
+	  gtk_button_new_with_label(foo, Button).
+
+	[PLGI] ----------------- <begin>  plgi_marshaller__va  <begin> -----------------
+	[PLGI] marshalling Gtk:gtk_button_new_with_label/2
+	[PLGI]   in_args: 0x1ea9120, out_args: (nil)
+	[PLGI]   building arg 0. arg_info: 0x17196d0 arg_data: 0x1ea90c0
+	[PLGI]     term: 0x9b  --->  arg: 0x1ea90c0 (utf8)   [xfer: 0, flags: 0x12]
+	[PLGI]     term: 0x9b -->  utf8: foo
+	[PLGI]     arg: (utf8) 0x1ea90c0  -->  arg cache (0x3) element: 0x1ea9038
+	[PLGI]   binding 1 in/out args to arg data...
+	[PLGI]     arg: 0 (in_arg) 0x1ea9120  --->  arg: 0x1ea90c0
+	[PLGI]   servicing function: gtk_button_new_with_label()
+	[PLGI]     function retval: 1
+	[PLGI]     dump: return arg: 0x1ea90c8 [0x1e92360]
+	[PLGI]   reading out arg 0. arg_info: 0x17196d0 arg_data: 0x1ea90c0
+	[PLGI]   populating return term using interface return arg...
+	[PLGI]     arg: 0x1ea90c8 (interface)  --->  term: 0xa2   [xfer: 0, flags: 0x12]
+	[PLGI]     GObject: (GtkWidget) 0x1e92360  --->  term: 0xa2
+	[PLGI]   deallocating return arg: arg_info: 0x1ea90c8 arg_data: 0x17196e8
+	[PLGI]   deallocating arg cache
+	[PLGI]     dealloc arg cache with ID: 0x3
+	[PLGI]     dealloc arg cache element: (utf8) 0x1ea9038  [xfer: 0]
+	[PLGI]     dealloc container: (utf8) 0x1ea9038 [0x1ea8fe0]
+	[PLGI]   deallocating async cache
+	[PLGI] marshaller retval: 1
+	[PLGI] ------------------- <end>  plgi_marshaller__va  <end> -------------------
+	B = <GtkButton>(0x1e92360).
+
+
+
 PLGI Limitations
 ================
 
