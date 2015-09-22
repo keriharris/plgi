@@ -470,7 +470,7 @@ It is currently not possible to define and create new GObject classes from Prolo
 
 * Not all GTK+ C functions are available
 
-Only those functions and methods defined in GObject Introspection typelib files are available from Prolog. There are a number of C functions that are unavailable from Prolog as they have been defined using C #define directives or have been explicitly marked as not introspectable.
+Only those functions and methods defined in GObject Introspection typelib files are available from Prolog. There are a number of C functions that are unavailable from Prolog as they have been defined using C #define directives or have been explicitly marked as not introspectable. Other notable C functions unavailable from Prolog include varargs functions. However, it should be noted that most varargs functions include variants which can be called from Prolog. e.g. gtk_dialog_add_buttons() is not available but calling gtk_dialog_add_button/4 multiple is possible.
 
 * Structs with void* fields can leak memory
 
