@@ -72,22 +72,25 @@ int plgi_exit_debug(int status, void *arg);
 
 #define PLGI_PRED_IMPL(fname) \
  \
-gboolean fname ## __impl(term_t t0); \
+gboolean fname ## __impl(term_t t0, control_t fctxt); \
  \
-foreign_t fname(term_t t0, int arity, void *context) \
+foreign_t fname(term_t t0, int arity, void *fctxt) \
 { \
   gint ret; \
   PLGI_debug_header; \
-  ret = fname ## __impl(t0); \
+  ret = fname ## __impl(t0, (control_t)fctxt); \
   PLGI_debug("%s retval: %d", __func__, ret); \
   PLGI_debug_trailer; \
   return ret; \
 } \
  \
-gboolean fname ## __impl(term_t t0)
+gboolean fname ## __impl(term_t t0, control_t fctxt)
 
 #define PLGI_PRED_REG(name, arity, fname) \
 	PL_register_foreign(name, arity, fname, PL_FA_VARARGS)
+
+#define PLGI_PRED_NDET_REG(name, arity, fname) \
+	PL_register_foreign(name, arity, fname, PL_FA_VARARGS|PL_FA_NONDETERMINISTIC)
 
 #define FA0 t0
 #define FA1 t0+1
@@ -99,6 +102,8 @@ gboolean fname ## __impl(term_t t0)
 #define FA7 t0+7
 #define FA8 t0+8
 #define FA9 t0+9
+
+#define FCTXT (control_t)fctxt
 
 PLGI_PRED_DEF(plgi_debug);
 
@@ -128,7 +133,9 @@ void plgi_register_callback(atom_t namespace, GICallbackInfo *callback_info);
 PLGI_PRED_DEF(plgi_load_namespace);
 PLGI_PRED_DEF(plgi_load_namespace_from_dir);
 PLGI_PRED_DEF(plgi_namespace_deps);
+PLGI_PRED_DEF(plgi_current_namespace);
 
+PLGI_PRED_DEF(plgi_registered_namespace);
 PLGI_PRED_DEF(plgi_registered_object);
 PLGI_PRED_DEF(plgi_registered_interface);
 PLGI_PRED_DEF(plgi_registered_struct);
@@ -138,6 +145,7 @@ PLGI_PRED_DEF(plgi_registered_callback);
 
 gboolean plgi_get_namespace_info(atom_t name, PLGINamespaceInfo **info);
 gboolean plgi_cache_namespace_info(PLGINamespaceInfo *info);
+PLGINamespaceInfo* plgi_namespace_info_iter(int *idx);
 
 
 

@@ -384,7 +384,9 @@ install_plgi()
   PLGI_PRED_REG("plgi_load_namespace", 1, plgi_load_namespace);
   PLGI_PRED_REG("plgi_load_namespace_from_dir", 2, plgi_load_namespace_from_dir);
   PLGI_PRED_REG("plgi_namespace_deps", 2, plgi_namespace_deps);
+  PLGI_PRED_NDET_REG("plgi_current_namespace", 1, plgi_current_namespace);
 
+  PLGI_PRED_REG("plgi_registered_namespace", 1, plgi_registered_namespace);
   PLGI_PRED_REG("plgi_registered_object", 1, plgi_registered_object);
   PLGI_PRED_REG("plgi_registered_struct", 1, plgi_registered_struct);
   PLGI_PRED_REG("plgi_registered_union", 1, plgi_registered_union);

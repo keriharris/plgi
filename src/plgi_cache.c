@@ -198,6 +198,28 @@ plgi_cache_namespace_info(PLGINamespaceInfo *info)
 }
 
 
+PLGINamespaceInfo*
+plgi_namespace_info_iter(int *idx)
+{
+  PLGINamespaceInfo *info = NULL;
+  int i = *idx;
+
+  if ( !namespace_info_cache )
+  { return NULL;
+  }
+
+  if ( i >= namespace_info_cache->len )
+  { return NULL;
+  }
+
+  info = g_ptr_array_index(namespace_info_cache, i);
+
+  (*idx)++;
+
+  return info;
+}
+
+
 
                  /*******************************
                  *       PLGICallableInfo       *

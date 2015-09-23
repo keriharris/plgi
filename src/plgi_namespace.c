@@ -580,6 +580,64 @@ PLGI_PRED_IMPL(plgi_namespace_deps)
 }
 
 
+PLGI_PRED_IMPL(plgi_current_namespace)
+{
+  term_t namespace = FA0;
+  control_t ctxt = FCTXT;
+
+  PLGINamespaceInfo* info;
+  int idx;
+
+  switch(PL_foreign_control(ctxt))
+  { case PL_FIRST_CALL:
+    { idx = 0;
+      break;
+    }
+    case PL_REDO:
+    { idx = (int)PL_foreign_context(ctxt);
+      break;
+    }
+    case PL_PRUNED:
+    { return TRUE;
+    }
+    default:
+    { assert(0);
+    }
+  }
+
+  info = plgi_namespace_info_iter(&idx);
+
+  if ( info )
+  { if ( !PL_unify_atom(namespace, info->namespace) )
+    { return FALSE;
+    }
+    PL_retry(idx);
+  }
+  else
+  { return FALSE;
+  }
+}
+
+
+PLGI_PRED_IMPL(plgi_registered_namespace)
+{
+  term_t object_name = FA0;
+
+  atom_t name;
+  PLGINamespaceInfo *namespace_info;
+
+  if ( !PL_get_atom(object_name, &name) )
+  { return PL_type_error("atom", object_name);
+  }
+
+  if ( !plgi_get_namespace_info(name, &namespace_info) )
+  { return FALSE;
+  }
+
+  return TRUE;
+}
+
+
 PLGI_PRED_IMPL(plgi_registered_object)
 {
   term_t object_name = FA0;

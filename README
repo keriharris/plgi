@@ -56,6 +56,10 @@ If typelib files exist in non-standard directories, they can be accessed in the 
 
 plgi_use_namespace/1 should be used in much the same way that use_module/1 is used.
 
+Loaded namespaces can be enumerated:
+
+* plgi_current_namespace(-Namespace)
+
 
 
 PLGI Predicates

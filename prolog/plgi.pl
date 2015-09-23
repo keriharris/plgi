@@ -19,7 +19,9 @@
 :- module(plgi, [
                  plgi_use_namespace/1,
                  plgi_use_namespace_from_dir/2,
+                 plgi_current_namespace/1,
 
+                 plgi_registered_namespace/1,
                  plgi_registered_callback/1,
                  plgi_registered_enum/1,
                  plgi_registered_object/1,
