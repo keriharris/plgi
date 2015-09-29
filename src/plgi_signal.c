@@ -47,6 +47,7 @@ void plgi_signal_marshaller(GClosure     *closure,
   atom_t name;
   module_t module;
   predicate_t predicate;
+  qid_t qid;
   term_t except;
 
   PLGI_debug_header;
@@ -147,7 +148,19 @@ void plgi_signal_marshaller(GClosure     *closure,
   PLGI_debug("  invoking signal handler: %s:%s/%d",
              PL_atom_chars(PL_module_name(module)), PL_atom_chars(name), arity);
 
-  ret = PL_call_predicate(module, PL_Q_NODEBUG|PL_Q_CATCH_EXCEPTION, predicate, t0);
+  qid = PL_open_query(module, PL_Q_NODEBUG|PL_Q_CATCH_EXCEPTION, predicate, t0);
+  ret = PL_next_solution(qid);
+  PL_cut_query(qid);
+
+  except = PL_exception(qid);
+  if ( except )
+  { predicate_t print_message = PL_predicate("print_message", 2, "user");
+    term_t ex_args = PL_new_term_refs(2);
+    PL_put_atom(ex_args+0, PL_new_atom("error"));
+    PL_put_term(ex_args+1, except);
+    PL_call_predicate(module, PL_Q_NODEBUG|PL_Q_CATCH_EXCEPTION, print_message, ex_args);
+    PL_clear_exception();
+  }
 
   PLGI_debug("    signal handler retval: %d", ret);
 
@@ -246,14 +259,7 @@ void plgi_signal_marshaller(GClosure     *closure,
  cleanup:
 
   plgi_dealloc_arg_cache(arg_cache, TRUE);
-
   g_free(args_data);
-
-  except = PL_exception(0);
-  if ( except )
-  { PLGI_debug("  clearing signal handler exception: 0x%lx", except);
-    PL_clear_exception();
-  }
 
   PLGI_debug_trailer;
 
