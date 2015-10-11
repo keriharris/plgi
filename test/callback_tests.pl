@@ -34,7 +34,9 @@ user:callback__fail :-
 	fail.
 
 user:callback__throw :-
-	throw(foo).
+	throw(callback_exception).
+
+prolog:message(callback_exception) --> [].
 
 user:callback__user_data(UserData) :-
 	assert(user:callback_user_data(UserData)),

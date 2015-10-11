@@ -1895,8 +1895,13 @@ user:callback__array(Ints, Strings, 42) :-
 	flag(callback_handled, X, X+1).
 
 user:callback__user_data(UserData, OutValue) :-
-	OutValue is UserData * 2,
-	flag(callback_handled, X, X+1).
+	(   number(UserData)
+	->  OutValue is UserData * 2,
+	    flag(callback_handled, X, X+1)
+	;   throw(callback_user_data_exception)
+	).
+
+prolog:message(callback_user_data_exception) --> [].
 
 user:callback__g_main_loop(_Source, _Result, _UserData) :-
 	user:regress_test_g_main_loop(Loop),

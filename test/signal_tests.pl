@@ -118,7 +118,9 @@ user:sig_handler__fail(_Object, _UserData) :-
 	fail.
 
 user:sig_handler__throw(_Object, _UserData) :-
-	throw(foo).
+	throw(sig_handler_exception).
+
+prolog:message(sig_handler_exception) --> [].
 
 user:sig_handler__small_arity :-
 	flag(signal_handled, X, X+1).
