@@ -226,6 +226,20 @@ Two convenience predicates exist for accessing GObject properties:
 
 These predicates are wrappers around g_object_get_property() and g_object_set_property() respectively but include code to automatically handle the GParamSpec and GValue plumbing.
 
+Gtype information about a GObject variable can be retrived using GLib's GType predicates. Among these are:
+
+* g_object_type(+Object, -Type)
+
+Retrieve Type for Object.
+
+* g_type_name(+Type, -Name)
+
+Get the unique Name assigned to Type.
+
+* g_type_is_a(+Type, +IsAType)
+
+Check wether Type is a descendent of IsAType.
+
 
 
 Struct Types
