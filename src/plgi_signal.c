@@ -148,7 +148,7 @@ void plgi_signal_marshaller(GClosure     *closure,
   PLGI_debug("  invoking signal handler: %s:%s/%d",
              PL_atom_chars(PL_module_name(module)), PL_atom_chars(name), arity);
 
-  qid = PL_open_query(module, PL_Q_NODEBUG|PL_Q_CATCH_EXCEPTION, predicate, t0);
+  qid = PL_open_query(module, PL_Q_NORMAL|PL_Q_CATCH_EXCEPTION, predicate, t0);
   ret = PL_next_solution(qid);
   PL_cut_query(qid);
 
