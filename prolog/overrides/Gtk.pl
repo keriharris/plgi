@@ -60,4 +60,10 @@ gtk_list_store_new(Types, ListStore) :-
 
 
 
+/* GtkTreeStore */
+gtk_tree_store_new(Types, ListStore) :-
+	gtk_tree_store_newv(Types, ListStore).
+
+
+
 :- 'Gtk':gtk_init_check([], _, _).
