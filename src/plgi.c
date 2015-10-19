@@ -26,6 +26,7 @@ typedef struct PLGITask
   GIArgument       *out_args;
   GIArgument       *return_arg;
   GError           *error;
+  gboolean          completed;
   gboolean          ret;
 } PLGITask;
 
@@ -46,6 +47,7 @@ plgi_main_loop_service_task(gpointer data)
 
   task->ret = ret;
   PLGI_debug("    function retval: %d", ret);
+  task->completed = TRUE;
 
   return G_SOURCE_REMOVE;
 }
@@ -214,9 +216,13 @@ plgi_marshaller__va(term_t t0, int arity, void *context)
   task.out_args = out_args;
   task.return_arg = return_arg;
   task.error = error;
+  task.completed = FALSE;
 
   g_main_context_invoke(NULL, plgi_main_loop_service_task, &task);
 
+  while ( !task.completed )
+  { ;
+  }
   ret = task.ret;
   error = task.error;
   func_invoked = TRUE;
