@@ -61,17 +61,62 @@ plgi_enum_to_term(gint64           enum_,
                   term_t           t)
 {
   PLGIEnumInfo *enum_info = enum_arg_info->enum_info;
+  GITypeTag type_tag = g_enum_info_get_storage_type(enum_info->info);
+  gint64 masked_enum;
   gint i;
 
   PLGI_debug("    enum: (%s) 0x%lx  --->  term: 0x%lx",
              PL_atom_chars(enum_info->name), enum_, t);
+
+  switch ( type_tag )
+  {
+    case GI_TYPE_TAG_BOOLEAN:
+    { masked_enum = (gboolean)enum_;
+      break;
+    }
+    case GI_TYPE_TAG_INT8:
+    { masked_enum = (gint8)enum_;
+      break;
+    }
+    case GI_TYPE_TAG_UINT8:
+    { masked_enum = (guint8)enum_;
+      break;
+    }
+    case GI_TYPE_TAG_INT16:
+    { masked_enum = (gint16)enum_;
+      break;
+    }
+    case GI_TYPE_TAG_UINT16:
+    { masked_enum = (guint16)enum_;
+      break;
+    }
+    case GI_TYPE_TAG_INT32:
+    { masked_enum = (gint32)enum_;
+      break;
+    }
+    case GI_TYPE_TAG_UINT32:
+    { masked_enum = (guint32)enum_;
+      break;
+    }
+    case GI_TYPE_TAG_INT64:
+    { masked_enum = (gint64)enum_;
+      break;
+    }
+    case GI_TYPE_TAG_UINT64:
+    { masked_enum = (guint64)enum_;
+      break;
+    }
+    default:
+    { g_assert_not_reached();
+    }
+  }
 
   for ( i = 0; i < enum_info->n_values; i++ )
   {
     PLGIValueInfo *value_info;
     value_info = enum_info->values_info + i;
 
-    if ( value_info->value == enum_ )
+    if ( value_info->value == masked_enum )
     { PL_put_atom(t, value_info->name);
       return TRUE;
     }
