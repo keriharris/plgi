@@ -425,6 +425,8 @@ install_plgi()
 
   PLGI_PRED_REG("plgi_enum_value", 2, plgi_enum_value);
 
+  PLGI_PRED_REG("plgi_g_idle_add", 2, plgi_g_idle_add);
+
   PLGI_PRED_REG("plgi_debug", 1, plgi_debug);
 
   PL_on_halt(plgi_exit_debug, NULL);

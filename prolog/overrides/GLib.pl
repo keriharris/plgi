@@ -18,11 +18,15 @@
 
 :- module('GLib_overrides',
           [
+            g_idle_add/2,
             g_timeout_add/4,
             g_timeout_add_seconds/4
           ]).
 
 
+
+g_idle_add(Predicate, UserData) :-
+	plgi:plgi_g_idle_add(Predicate, UserData).
 
 g_timeout_add(Interval, Predicate, UserData, EventSourceId) :-
 	g_timeout_add_full(0, Interval, Predicate, UserData, EventSourceId).

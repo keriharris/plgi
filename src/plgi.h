@@ -819,6 +819,7 @@ void     plgi_dealloc_callback(gpointer data);
 
 PLGI_PRED_DEF(plgi_signal_connect_data);
 PLGI_PRED_DEF(plgi_signal_emit);
+PLGI_PRED_DEF(plgi_g_idle_add);
 
 
 
