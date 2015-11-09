@@ -26,7 +26,7 @@ SWI_SOLIBDIR=@SWI_SOLIBDIR@
 SWI_PLLIBDIR=@SWI_PLLIBDIR@
 
 CFLAGS+= -Wall -I. @SWI_CFLAGS@ @GI_CFLAGS@
-LDFLAGS= -Wall -shared @SWI_LIBS@ @GI_LIBS@
+LDFLAGS= -Wall -shared -Wl,-soname=plgi.so @SWI_LIBS@ @GI_LIBS@
 
 CC=@CC@
 
