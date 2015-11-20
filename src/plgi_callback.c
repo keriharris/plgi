@@ -53,7 +53,8 @@ plgi_callback_marshaller(ffi_cif  *cif,
   term_t t0;
   gint n_args;
   gint pl_arg_pos;
-  gint arity, i, ret;
+  gint i, ret;
+  gsize arity;
   atom_t name;
   module_t module;
   predicate_t predicate;
@@ -171,7 +172,7 @@ plgi_callback_marshaller(ffi_cif  *cif,
     }
   }
 
-  PLGI_debug("  invoking callback: %s:%s/%d",
+  PLGI_debug("  invoking callback: %s:%s/%zd",
              PL_atom_chars(PL_module_name(module)), PL_atom_chars(name), arity);
 
   qid = PL_open_query(module, PL_Q_NORMAL|PL_Q_CATCH_EXCEPTION, predicate, t0);
@@ -328,7 +329,7 @@ plgi_term_to_callback_functor(term_t     t,
   term_t t_arity = PL_new_term_ref();
   atom_t ATOM_slash = PL_new_atom("/");
   atom_t name;
-  gint arity;
+  gsize arity;
 
   *module = PL_new_module(PL_new_atom("user"));
 
@@ -347,7 +348,7 @@ plgi_term_to_callback_functor(term_t     t,
   }
 
   _PL_get_arg(2, t0, t_arity);
-  if ( !PL_get_integer(t_arity, &arity) )
+  if ( !PL_get_integer(t_arity, (int*)&arity) )
   { return PL_type_error("callback (in name/arity form)", t);
   }
 
@@ -470,7 +471,8 @@ gboolean
 plgi_idle_marshaller(gpointer data)
 {
   PLGIIdleClosure *closure;
-  gint arity, ret;
+  gint ret;
+  gsize arity;
   atom_t name;
   module_t module;
   predicate_t predicate;
@@ -493,7 +495,7 @@ plgi_idle_marshaller(gpointer data)
   predicate = closure->handler;
   PL_predicate_info(predicate, &name, &arity, &module);
 
-  PLGI_debug("  invoking idle goal: %s:%s/%d",
+  PLGI_debug("  invoking idle goal: %s:%s/%zd",
              PL_atom_chars(PL_module_name(module)), PL_atom_chars(name), arity);
 
   qid = PL_open_query(module, PL_Q_NORMAL|PL_Q_CATCH_EXCEPTION, predicate, user_data);
@@ -552,7 +554,7 @@ PLGI_PRED_IMPL(plgi_g_idle_add)
   closure->handler = predicate;
   closure->user_data = closure_data;
 
-  PLGI_debug("  adding idle goal: %s:%s/%d",
+  PLGI_debug("  adding idle goal: %s:%s/%zd",
              PL_atom_chars(PL_module_name(module)),
              PL_atom_chars(PL_functor_name(functor)),
              PL_functor_arity(functor));

@@ -58,7 +58,7 @@ void plgi_calling_context(control_t *context, atom_t *module, atom_t *name, int 
   predicate_t pred;
   module_t m;
   atom_t n;
-  int a;
+  gsize a;
 
   pred = PL_foreign_context_predicate(context);
   PL_predicate_info(pred, &n, &a, &m);

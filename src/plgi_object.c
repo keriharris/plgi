@@ -350,7 +350,7 @@ PLGI_PRED_IMPL(plgi_object_new)
     term_t prop_name = PL_new_term_ref();
     term_t prop_value = PL_new_term_ref();
     atom_t name;
-    gint arity;
+    gsize arity;
 
     parameter = parameters + i;
     gvalue = &parameter->value;

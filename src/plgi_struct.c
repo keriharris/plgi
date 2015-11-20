@@ -271,7 +271,8 @@ PLGI_PRED_IMPL(plgi_struct_new)
   PLGIStructInfo *struct_info;
   PLGIArgCache *arg_cache = NULL;
   atom_t name;
-  gint arity, i;
+  gsize arity;
+  gint i;
   term_t struct_blob = PL_new_term_ref();
   PLGIBlobType blob_type;
   gpointer struct0, data;
@@ -310,7 +311,7 @@ PLGI_PRED_IMPL(plgi_struct_new)
     term_t t_value = PL_new_term_ref();
     atom_t a_name;
     gpointer field_data;
-    gint field_arity;
+    gsize field_arity;
 
     _PL_get_arg(i+1, t, field);
     if ( !( PL_get_name_arity(field, &name, &field_arity) &&

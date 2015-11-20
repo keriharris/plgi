@@ -256,7 +256,8 @@ PLGI_PRED_IMPL(plgi_union_new)
   PLGIFieldInfo *field_info;
   PLGIArgCache *arg_cache = NULL;
   atom_t name;
-  gint arity, i;
+  gsize arity;
+  gint i;
   term_t field = PL_new_term_ref();
   term_t t_name = PL_new_term_ref();
   term_t t_value = PL_new_term_ref();

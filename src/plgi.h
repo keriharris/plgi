@@ -16,6 +16,7 @@
     along with PLGI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define PL_ARITY_AS_SIZE 1
 #include <gmp.h>
 #include <SWI-Prolog.h>
 #include <girepository.h>

@@ -29,7 +29,7 @@
 gboolean
 plgi_get_null(term_t t, gpointer *v)
 { atom_t name;
-  gint arity;
+  gsize arity;
 
   if ( PL_get_name_arity(t, &name, &arity) )
   { const gchar* s;

@@ -158,7 +158,7 @@ plgi_term_to_ghashtable(term_t                 t,
   { term_t t_key = PL_new_term_ref();
     term_t t_value = PL_new_term_ref();
     atom_t name;
-    gint arity;
+    gsize arity;
     GIArgument key_arg;
     gpointer key = NULL;
     gpointer value = NULL;

@@ -43,7 +43,8 @@ void plgi_signal_marshaller(GClosure     *closure,
   GIArgument *args_data;
   PLGIArgCache *arg_cache;
   term_t t0;
-  gint arity, n_args, pl_arg_pos, i, ret;
+  gint n_args, pl_arg_pos, i, ret;
+  gsize arity;
   atom_t name;
   module_t module;
   predicate_t predicate;
@@ -145,7 +146,7 @@ void plgi_signal_marshaller(GClosure     *closure,
     }
   }
 
-  PLGI_debug("  invoking signal handler: %s:%s/%d",
+  PLGI_debug("  invoking signal handler: %s:%s/%zd",
              PL_atom_chars(PL_module_name(module)), PL_atom_chars(name), arity);
 
   qid = PL_open_query(module, PL_Q_NORMAL|PL_Q_CATCH_EXCEPTION, predicate, t0);
@@ -382,7 +383,7 @@ PLGI_PRED_IMPL(plgi_signal_connect_data)
     }
   }
 
-  PLGI_debug("    signal: 0x%x (%s)  --->  handler: %s:%s/%d [flags: 0x%x]",
+  PLGI_debug("    signal: 0x%x (%s)  --->  handler: %s:%s/%zd [flags: 0x%x]",
              signal_id, detailed_signal, PL_atom_chars(PL_module_name(module)),
              PL_atom_chars(PL_functor_name(functor)), PL_functor_arity(functor),
              flags);
