@@ -30,6 +30,23 @@
 
 
                 /*******************************
+                 *           Version           *
+                 *******************************/
+
+#define PLGI_VERSION_MAJOR 1
+#define PLGI_VERSION_MINOR 0
+#define PLGI_VERSION_MICRO 4
+
+#define PLGI_VERSION_ENCODE(major, minor, micro) \
+          ( (major * 10000) + (minor * 100) + (micro * 1) )
+
+#define PLGI_VERSION PLGI_VERSION_ENCODE(PLGI_VERSION_MAJOR, \
+                                         PLGI_VERSION_MINOR, \
+                                         PLGI_VERSION_MICRO)
+
+
+
+                /*******************************
                  *            Debug            *
                  *******************************/
 
@@ -106,6 +123,7 @@ gboolean fname ## __impl(term_t t0, control_t fctxt)
 
 #define FCTXT (control_t)fctxt
 
+PLGI_PRED_DEF(plgi_version);
 PLGI_PRED_DEF(plgi_debug);
 
 

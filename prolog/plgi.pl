@@ -39,6 +39,8 @@
 
                  plgi_enum_value/2,
 
+                 plgi_version/1,
+
                  plgi_debug/1
                 ]).
 

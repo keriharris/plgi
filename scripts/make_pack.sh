@@ -26,6 +26,14 @@ TOPDIR=$SCRIPTDIR/..
 
 VERSION=$(cat $TOPDIR/VERSION)
 
+VERSION_MAJOR=$(grep "#define PLGI_VERSION_MAJOR" $TOPDIR/src/plgi.h | sed -e "s:.* ::")
+VERSION_MINOR=$(grep "#define PLGI_VERSION_MINOR" $TOPDIR/src/plgi.h | sed -e "s:.* ::")
+VERSION_MICRO=$(grep "#define PLGI_VERSION_MICRO" $TOPDIR/src/plgi.h | sed -e "s:.* ::")
+if [[ "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}" != "$VERSION" ]]; then
+	echo "Version mismatch between VERSION and plgi.h"
+	exit
+fi
+
 cd $TOPDIR
 make distclean
 
