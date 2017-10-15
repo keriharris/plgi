@@ -82,8 +82,7 @@ g_signal_emit(Object, Signal, Detail, Args) :-
 
 /* GValue */
 g_value_init(GType, GValue) :-
-	plgi:plgi_struct_new('GValue'(), EmptyGValue),
-	'GObject':g_value_init(EmptyGValue, GType, GValue).
+	plgi:plgi_g_value_init(GType, GValue).
 
 g_value_get_boxed(GValue, Boxed) :-
 	plgi:plgi_g_value_get_boxed(GValue, Boxed).

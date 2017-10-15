@@ -545,6 +545,33 @@ PLGI_PRED_IMPL(plgi_g_value_holds)
 }
 
 
+PLGI_PRED_IMPL(plgi_g_value_init)
+{
+  term_t type = FA0;
+  term_t value = FA1;
+
+  term_t struct_blob = PL_new_term_ref();
+  atom_t name = PL_new_atom("GValue");
+  GValue *gvalue;
+  GType gtype;
+
+  if ( !plgi_term_to_gtype(type, &gtype) )
+  { return PL_type_error("GType", type);
+  }
+
+  gvalue = malloc(sizeof(*gvalue));
+  memset(gvalue, 0, sizeof(*gvalue));
+  g_value_init(gvalue, gtype);
+
+  if ( !plgi_put_blob(PLGI_BLOB_BOXED, G_TYPE_VALUE, name, TRUE,
+                      gvalue, struct_blob) )
+  { return FALSE;
+  }
+
+  return PL_unify(value, struct_blob);
+}
+
+
 PLGI_PRED_IMPL(plgi_g_value_get_boxed)
 {
   term_t value = FA0;

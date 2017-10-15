@@ -412,6 +412,7 @@ install_plgi()
 
   PLGI_PRED_REG("plgi_g_is_value", 1, plgi_g_is_value);
   PLGI_PRED_REG("plgi_g_value_holds", 2, plgi_g_value_holds);
+  PLGI_PRED_REG("plgi_g_value_init", 2, plgi_g_value_init);
   PLGI_PRED_REG("plgi_g_value_get_boxed", 2, plgi_g_value_get_boxed);
   PLGI_PRED_REG("plgi_g_value_set_boxed", 2, plgi_g_value_set_boxed);
   PLGI_PRED_REG("plgi_struct_new", 2, plgi_struct_new);

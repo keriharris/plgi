@@ -618,6 +618,7 @@ gsize plgi_struct_size(PLGIStructArgInfo* struct_info);
 
 PLGI_PRED_DEF(plgi_g_is_value);
 PLGI_PRED_DEF(plgi_g_value_holds);
+PLGI_PRED_DEF(plgi_g_value_init);
 PLGI_PRED_DEF(plgi_g_value_get_boxed);
 PLGI_PRED_DEF(plgi_g_value_set_boxed);
 
