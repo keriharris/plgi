@@ -21,7 +21,8 @@
             gtk_builder_add_from_string/3,
             gtk_builder_add_objects_from_string/4,
             gtk_builder_connect_signals/2,
-            gtk_list_store_new/2
+            gtk_list_store_new/2,
+            gtk_tree_store_new/2
           ]).
 
 
