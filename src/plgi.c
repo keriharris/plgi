@@ -410,6 +410,8 @@ install_plgi()
   PLGI_PRED_REG("plgi_signal_connect_data", 6, plgi_signal_connect_data);
   PLGI_PRED_REG("plgi_signal_emit", 4, plgi_signal_emit);
 
+  PLGI_PRED_REG("plgi_g_closure_invoke", 4, plgi_g_closure_invoke);
+
   PLGI_PRED_REG("plgi_g_is_value", 1, plgi_g_is_value);
   PLGI_PRED_REG("plgi_g_value_holds", 2, plgi_g_value_holds);
   PLGI_PRED_REG("plgi_g_value_init", 2, plgi_g_value_init);

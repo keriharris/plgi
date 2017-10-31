@@ -18,6 +18,7 @@
 
 :- module('GObject_overrides',
           [
+            g_closure_invoke/4,
             g_is_object/1,
             g_is_value/1,
             g_object_new/3,
@@ -35,6 +36,12 @@
             g_value_init/2,
             g_value_set_boxed/2
           ]).
+
+
+
+/* GClosure */
+g_closure_invoke(Closure, ReturnValue, ParamValues, InvocationHint) :-
+	plgi:plgi_g_closure_invoke(Closure, ReturnValue, ParamValues, InvocationHint).
 
 
 

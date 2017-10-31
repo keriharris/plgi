@@ -516,6 +516,76 @@ PLGI_PRED_IMPL(plgi_struct_term)
 }
 
 
+PLGI_PRED_IMPL(plgi_g_closure_invoke)
+{
+  term_t closure         = FA0;
+  term_t return_value    = FA1;
+  term_t param_values    = FA2;
+  term_t invocation_hint = FA3;
+
+  PLGIBlob *closure_blob;
+  PLGIBlob *return_value_blob;
+
+  GClosure *gclosure;
+  GValue *greturn_value;
+  GValue *gparam_values;
+  guint n_param_values;
+  gpointer ginvocation_hint;
+
+  term_t list = PL_copy_term_ref(param_values);
+  term_t head = PL_new_term_ref();
+  size_t len;
+
+  if ( !( plgi_get_blob(closure, &closure_blob) &&
+          g_type_is_a( closure_blob->gtype, G_TYPE_CLOSURE ) ) )
+  { return PL_type_error("GClosure", closure);
+  }
+
+  gclosure = closure_blob->data;
+
+  if ( !( plgi_get_blob(return_value, &return_value_blob) &&
+          g_type_is_a( return_value_blob->gtype, G_TYPE_VALUE ) ) )
+  { return PL_type_error("GValue", return_value);
+  }
+
+  greturn_value = return_value_blob->data;
+
+  if ( !plgi_get_null(invocation_hint, &ginvocation_hint) )
+  { if ( !PL_get_pointer_ex(invocation_hint, &ginvocation_hint) )
+    { return FALSE;
+    }
+  }
+
+  if ( PL_skip_list(param_values, 0, &len) != PL_LIST )
+  { return PL_type_error("list", param_values);
+  }
+  gparam_values = g_malloc0_n(len, sizeof(*gparam_values));
+
+  n_param_values = 0;
+  while ( PL_get_list(list, head, list) )
+  { PLGIBlob *param_blob;
+    GValue *param;
+
+    if ( !( plgi_get_blob(head, &param_blob) &&
+            g_type_is_a( param_blob->gtype, G_TYPE_VALUE ) ) )
+    { g_free(gparam_values);
+      return PL_type_error("GValue", head);
+    }
+    param = param_blob->data;
+
+    g_value_copy(param, gparam_values + n_param_values);
+
+    n_param_values++;
+  }
+
+  g_closure_invoke(gclosure, greturn_value, n_param_values, gparam_values, ginvocation_hint);
+
+  g_free(gparam_values);
+
+  return TRUE;
+}
+
+
 PLGI_PRED_IMPL(plgi_g_is_value)
 {
   term_t gvalue = FA0;
