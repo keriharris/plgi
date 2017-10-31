@@ -31,11 +31,6 @@ typedef struct PLGICallbackClosure
   gpointer user_data;
 } PLGICallbackClosure;
 
-typedef struct PLGIIdleClosure
-{ predicate_t handler;
-  gpointer user_data;
-} PLGIIdleClosure;
-
 
 
 void
@@ -464,102 +459,4 @@ plgi_closure_data_to_term(gpointer v, term_t t)
   }
 
   return PL_recorded(v, t);
-}
-
-
-gboolean
-plgi_idle_marshaller(gpointer data)
-{
-  PLGIIdleClosure *closure;
-  gint ret;
-  gsize arity;
-  atom_t name;
-  module_t module;
-  predicate_t predicate;
-  term_t user_data = PL_new_term_ref();
-  qid_t qid;
-  term_t except;
-
-  PLGI_debug_header;
-
-  closure = data;
-  if ( !closure )
-  { return G_SOURCE_REMOVE;
-  }
-
-  if ( !plgi_closure_data_to_term(closure->user_data, user_data) )
-  { return G_SOURCE_REMOVE;
-  }
-  PL_erase(closure->user_data);
-
-  predicate = closure->handler;
-  PL_predicate_info(predicate, &name, &arity, &module);
-
-  PLGI_debug("  invoking idle goal: %s:%s/%zd",
-             PL_atom_chars(PL_module_name(module)), PL_atom_chars(name), arity);
-
-  qid = PL_open_query(module, PL_Q_NORMAL|PL_Q_CATCH_EXCEPTION, predicate, user_data);
-  ret = PL_next_solution(qid);
-  PL_cut_query(qid);
-
-  except = PL_exception(qid);
-  if ( except )
-  { predicate_t print_message = PL_predicate("print_message", 2, "user");
-    term_t ex_args = PL_new_term_refs(2);
-    PL_put_atom(ex_args+0, PL_new_atom("error"));
-    PL_put_term(ex_args+1, except);
-    PL_call_predicate(module, PL_Q_NODEBUG|PL_Q_CATCH_EXCEPTION, print_message, ex_args);
-    PL_clear_exception();
-  }
-
-  PLGI_debug("  idle goal retval: %d", ret);
-
-  PLGI_debug_trailer;
-
-  return G_SOURCE_REMOVE;
-}
-
-
-
-                 /*******************************
-                 *      Foreign Predicates      *
-                 *******************************/
-
-PLGI_PRED_IMPL(plgi_g_idle_add)
-{
-  term_t goal = FA0;
-  term_t user_data = FA1;
-
-  PLGIIdleClosure *closure;
-  module_t module;
-  functor_t functor;
-  predicate_t predicate;
-  gpointer closure_data;
-
-  if ( !plgi_term_to_callback_functor(goal, &module, &functor) )
-  { return FALSE;
-  }
-
-  if ( !plgi_term_to_closure_data(user_data, &closure_data) )
-  { return FALSE;
-  }
-
-  predicate = PL_pred(functor, module);
-  /* FIXME: check existence of callback predicate */
-
-  closure = g_malloc0(sizeof(*closure));
-
-  PLGI_debug("  idle goal closure: %p", closure);
-
-  closure->handler = predicate;
-  closure->user_data = closure_data;
-
-  PLGI_debug("  adding idle goal: %s:%s/%zd",
-             PL_atom_chars(PL_module_name(module)),
-             PL_atom_chars(PL_functor_name(functor)),
-             PL_functor_arity(functor));
-
-  g_idle_add(plgi_idle_marshaller, closure);
-
-  return TRUE;
 }

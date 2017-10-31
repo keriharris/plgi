@@ -241,63 +241,6 @@ plgi_object_to_term(gpointer           object,
                  *      Foreign Predicates      *
                  *******************************/
 
-PLGI_PRED_IMPL(plgi_g_is_object)
-{
-  term_t object = FA0;
-
-  PLGIBlob *object_blob;
-
-  return plgi_object_get_blob(object, &object_blob);
-}
-
-
-PLGI_PRED_IMPL(plgi_g_object_type)
-{
-  term_t object = FA0;
-  term_t type   = FA1;
-
-  PLGIBlob *object_blob;
-  term_t type0 = PL_new_term_ref();
-
-  if ( !plgi_object_get_blob(object, &object_blob) )
-  { return FALSE;
-  }
-
-  if ( !plgi_gtype_to_term(object_blob->gtype, type0) )
-  { return FALSE;
-  }
-
-  return PL_unify(type, type0);
-}
-
-
-PLGI_PRED_IMPL(plgi_g_param_spec_value_type)
-{
-  term_t param_spec = FA0;
-  term_t value_type = FA1;
-
-  PLGIBlob *object_blob;
-  GType gtype;
-  term_t value_type0 = PL_new_term_ref();
-
-  if ( !plgi_object_get_blob(param_spec, &object_blob ) )
-  { return FALSE;
-  }
-
-  if ( !G_IS_PARAM_SPEC(object_blob->data) )
-  { return PL_type_error("GParamSpec", param_spec);
-  }
-
-  gtype = G_PARAM_SPEC_VALUE_TYPE(object_blob->data);
-
-  if ( !plgi_gtype_to_term(gtype, value_type0) )
-  { return FALSE;
-  }
-
-  return PL_unify(value_type, value_type0);
-}
-
-
 PLGI_PRED_IMPL(plgi_object_new)
 {
   term_t object_type = FA0;

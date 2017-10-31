@@ -399,10 +399,6 @@ install_plgi()
   PLGI_PRED_REG("plgi_registered_enum", 1, plgi_registered_enum);
   PLGI_PRED_REG("plgi_registered_callback", 1, plgi_registered_callback);
 
-  PLGI_PRED_REG("plgi_g_param_spec_value_type", 2, plgi_g_param_spec_value_type);
-
-  PLGI_PRED_REG("plgi_g_is_object", 1, plgi_g_is_object);
-  PLGI_PRED_REG("plgi_g_object_type", 2, plgi_g_object_type);
   PLGI_PRED_REG("plgi_object_new", 3, plgi_object_new);
   PLGI_PRED_REG("plgi_object_get_property", 3, plgi_object_get_property);
   PLGI_PRED_REG("plgi_object_set_property", 3, plgi_object_set_property);
@@ -410,13 +406,6 @@ install_plgi()
   PLGI_PRED_REG("plgi_signal_connect_data", 6, plgi_signal_connect_data);
   PLGI_PRED_REG("plgi_signal_emit", 4, plgi_signal_emit);
 
-  PLGI_PRED_REG("plgi_g_closure_invoke", 4, plgi_g_closure_invoke);
-
-  PLGI_PRED_REG("plgi_g_is_value", 1, plgi_g_is_value);
-  PLGI_PRED_REG("plgi_g_value_holds", 2, plgi_g_value_holds);
-  PLGI_PRED_REG("plgi_g_value_init", 2, plgi_g_value_init);
-  PLGI_PRED_REG("plgi_g_value_get_boxed", 2, plgi_g_value_get_boxed);
-  PLGI_PRED_REG("plgi_g_value_set_boxed", 2, plgi_g_value_set_boxed);
   PLGI_PRED_REG("plgi_struct_new", 2, plgi_struct_new);
   PLGI_PRED_REG("plgi_struct_get_field", 3, plgi_struct_get_field);
   PLGI_PRED_REG("plgi_struct_set_field", 3, plgi_struct_set_field);
@@ -428,11 +417,21 @@ install_plgi()
 
   PLGI_PRED_REG("plgi_enum_value", 2, plgi_enum_value);
 
-  PLGI_PRED_REG("plgi_g_idle_add", 2, plgi_g_idle_add);
-
   PLGI_PRED_REG("plgi_version", 1, plgi_version);
 
   PLGI_PRED_REG("plgi_debug", 1, plgi_debug);
+
+  /* Overrides */
+  PLGI_PRED_REG("plgi_g_closure_invoke", 4, plgi_g_closure_invoke);
+  PLGI_PRED_REG("plgi_g_idle_add", 2, plgi_g_idle_add);
+  PLGI_PRED_REG("plgi_g_is_object", 1, plgi_g_is_object);
+  PLGI_PRED_REG("plgi_g_is_value", 1, plgi_g_is_value);
+  PLGI_PRED_REG("plgi_g_object_type", 2, plgi_g_object_type);
+  PLGI_PRED_REG("plgi_g_param_spec_value_type", 2, plgi_g_param_spec_value_type);
+  PLGI_PRED_REG("plgi_g_value_get_boxed", 2, plgi_g_value_get_boxed);
+  PLGI_PRED_REG("plgi_g_value_holds", 2, plgi_g_value_holds);
+  PLGI_PRED_REG("plgi_g_value_init", 2, plgi_g_value_init);
+  PLGI_PRED_REG("plgi_g_value_set_boxed", 2, plgi_g_value_set_boxed);
 
   PL_on_halt(plgi_exit_debug, NULL);
 }

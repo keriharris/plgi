@@ -34,7 +34,7 @@ INSTALL=@INSTALL@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=@INSTALL_DATA@
 
-OBJECTS= plgi.o plgi_argument.o plgi_array.o plgi_blob.o plgi_cache.o plgi_callback.o plgi_debug.o plgi_enum.o plgi_error.o plgi_flag.o plgi_gbytes.o plgi_ghashtable.o plgi_glist.o plgi_gstrv.o plgi_interface.o plgi_namespace.o plgi_object.o plgi_signal.o plgi_struct.o plgi_types.o plgi_union.o plgi_version.o
+OBJECTS= plgi.o plgi_argument.o plgi_array.o plgi_blob.o plgi_cache.o plgi_callback.o plgi_debug.o plgi_enum.o plgi_error.o plgi_flag.o plgi_gbytes.o plgi_ghashtable.o plgi_glist.o plgi_gstrv.o plgi_interface.o plgi_namespace.o plgi_object.o plgi_overrides.o plgi_signal.o plgi_struct.o plgi_types.o plgi_union.o plgi_version.o
 
 OVERRIDES= GLib.pl GObject.pl Gtk.pl
 

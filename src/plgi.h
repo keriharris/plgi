@@ -564,9 +564,6 @@ gboolean plgi_object_to_term(gpointer object,
 
 gboolean plgi_object_get_blob(term_t t, PLGIBlob **blob) PLGI_WARN_UNUSED;
 
-PLGI_PRED_DEF(plgi_g_is_object);
-PLGI_PRED_DEF(plgi_g_object_type);
-PLGI_PRED_DEF(plgi_g_param_spec_value_type);
 PLGI_PRED_DEF(plgi_object_new);
 PLGI_PRED_DEF(plgi_object_get_property);
 PLGI_PRED_DEF(plgi_object_set_property);
@@ -615,14 +612,6 @@ gboolean plgi_alloc_struct(gpointer *struct_,
                            PLGIStructArgInfo *struct_info) PLGI_WARN_UNUSED;
 
 gsize plgi_struct_size(PLGIStructArgInfo* struct_info);
-
-PLGI_PRED_DEF(plgi_g_closure_invoke);
-
-PLGI_PRED_DEF(plgi_g_is_value);
-PLGI_PRED_DEF(plgi_g_value_holds);
-PLGI_PRED_DEF(plgi_g_value_init);
-PLGI_PRED_DEF(plgi_g_value_get_boxed);
-PLGI_PRED_DEF(plgi_g_value_set_boxed);
 
 PLGI_PRED_DEF(plgi_struct_new);
 PLGI_PRED_DEF(plgi_struct_get_field);
@@ -841,7 +830,6 @@ void     plgi_dealloc_callback(gpointer data);
 
 PLGI_PRED_DEF(plgi_signal_connect_data);
 PLGI_PRED_DEF(plgi_signal_emit);
-PLGI_PRED_DEF(plgi_g_idle_add);
 
 
 
@@ -854,3 +842,20 @@ gboolean plgi_gerror_to_term(GError *error, term_t t) PLGI_WARN_UNUSED;
 gboolean plgi_raise_error(gchar *message);
 gboolean plgi_raise_error__va(gchar *fmt, ...);
 gboolean plgi_raise_gerror(GError *error);
+
+
+
+                /*******************************
+                 *          Overrides          *
+                 *******************************/
+
+PLGI_PRED_DEF(plgi_g_closure_invoke);
+PLGI_PRED_DEF(plgi_g_idle_add);
+PLGI_PRED_DEF(plgi_g_is_object);
+PLGI_PRED_DEF(plgi_g_is_value);
+PLGI_PRED_DEF(plgi_g_object_type);
+PLGI_PRED_DEF(plgi_g_param_spec_value_type);
+PLGI_PRED_DEF(plgi_g_value_get_boxed);
+PLGI_PRED_DEF(plgi_g_value_holds);
+PLGI_PRED_DEF(plgi_g_value_init);
+PLGI_PRED_DEF(plgi_g_value_set_boxed);
