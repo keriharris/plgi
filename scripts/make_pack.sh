@@ -84,6 +84,7 @@ sed -i -e "/SWI_BASE/d" \
 cp $TOPDIR/aclocal.m4 pack-$VERSION/plgi/
 cp $TOPDIR/install-sh pack-$VERSION/plgi/
 cp $TOPDIR/Makefile.in pack-$VERSION/plgi/
+sed -i -e "s: check: -i check:" pack-$VERSION/plgi/Makefile.in
 
 cd pack-$VERSION
 tar -cvzf plgi-$VERSION.tgz plgi
