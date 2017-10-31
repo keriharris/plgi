@@ -74,7 +74,6 @@ callback_tests_nullfunc (CallbackTestsCallbackVoid callback);
 
 /**
  * CallbackTestsCallbackReturnBoolean:
- * Returns: (transfer none):
  */
 typedef gboolean (* CallbackTestsCallbackReturnBoolean) (void);
 
@@ -84,7 +83,6 @@ callback_tests_return_gboolean (CallbackTestsCallbackReturnBoolean callback);
 
 /**
  * CallbackTestsCallbackReturnInt8:
- * Returns: (transfer none):
  */
 typedef gint8 (* CallbackTestsCallbackReturnInt8) (void);
 
@@ -94,7 +92,6 @@ callback_tests_return_gint8 (CallbackTestsCallbackReturnInt8 callback);
 
 /**
  * CallbackTestsCallbackReturnUint8:
- * Returns: (transfer none):
  */
 typedef guint8 (* CallbackTestsCallbackReturnUint8) (void);
 
@@ -104,7 +101,6 @@ callback_tests_return_guint8 (CallbackTestsCallbackReturnUint8 callback);
 
 /**
  * CallbackTestsCallbackReturnInt16:
- * Returns: (transfer none):
  */
 typedef gint16 (* CallbackTestsCallbackReturnInt16) (void);
 
@@ -114,7 +110,6 @@ callback_tests_return_gint16 (CallbackTestsCallbackReturnInt16 callback);
 
 /**
  * CallbackTestsCallbackReturnUint16:
- * Returns: (transfer none):
  */
 typedef guint16 (* CallbackTestsCallbackReturnUint16) (void);
 
@@ -124,7 +119,6 @@ callback_tests_return_guint16 (CallbackTestsCallbackReturnUint16 callback);
 
 /**
  * CallbackTestsCallbackReturnInt32:
- * Returns: (transfer none):
  */
 typedef gint32 (* CallbackTestsCallbackReturnInt32) (void);
 
@@ -134,7 +128,6 @@ callback_tests_return_gint32 (CallbackTestsCallbackReturnInt32 callback);
 
 /**
  * CallbackTestsCallbackReturnUin32:
- * Returns: (transfer none):
  */
 typedef guint32 (* CallbackTestsCallbackReturnUint32) (void);
 
@@ -144,7 +137,6 @@ callback_tests_return_guint32 (CallbackTestsCallbackReturnUint32 callback);
 
 /**
  * CallbackTestsCallbackReturnInt64:
- * Returns: (transfer none):
  */
 typedef gint64 (* CallbackTestsCallbackReturnInt64) (void);
 
@@ -154,7 +146,6 @@ callback_tests_return_gint64 (CallbackTestsCallbackReturnInt64 callback);
 
 /**
  * CallbackTestsCallbackReturnUint64:
- * Returns: (transfer none):
  */
 typedef guint64 (* CallbackTestsCallbackReturnUint64) (void);
 
@@ -164,7 +155,6 @@ callback_tests_return_guint64 (CallbackTestsCallbackReturnUint64 callback);
 
 /**
  * CallbackTestsCallbackReturnChar:
- * Returns: (transfer none):
  */
 typedef gchar (* CallbackTestsCallbackReturnChar) (void);
 
@@ -174,7 +164,6 @@ callback_tests_return_gchar (CallbackTestsCallbackReturnChar callback);
 
 /**
  * CallbackTestsCallbackReturnShort:
- * Returns: (transfer none):
  */
 typedef gshort (* CallbackTestsCallbackReturnShort) (void);
 
@@ -184,7 +173,6 @@ callback_tests_return_gshort (CallbackTestsCallbackReturnShort callback);
 
 /**
  * CallbackTestsCallbackReturnUshort:
- * Returns: (transfer none):
  */
 typedef gushort (* CallbackTestsCallbackReturnUshort) (void);
 
@@ -194,7 +182,6 @@ callback_tests_return_gushort (CallbackTestsCallbackReturnUshort callback);
 
 /**
  * CallbackTestsCallbackReturnInt:
- * Returns: (transfer none):
  */
 typedef gint (* CallbackTestsCallbackReturnInt) (void);
 
@@ -204,7 +191,6 @@ callback_tests_return_gint (CallbackTestsCallbackReturnInt callback);
 
 /**
  * CallbackTestsCallbackReturnUint:
- * Returns: (transfer none):
  */
 typedef guint (* CallbackTestsCallbackReturnUint) (void);
 
@@ -214,7 +200,6 @@ callback_tests_return_guint (CallbackTestsCallbackReturnUint callback);
 
 /**
  * CallbackTestsCallbackReturnLong:
- * Returns: (transfer none):
  */
 typedef glong (* CallbackTestsCallbackReturnLong) (void);
 
@@ -224,7 +209,6 @@ callback_tests_return_glong (CallbackTestsCallbackReturnLong callback);
 
 /**
  * CallbackTestsCallbackReturnUlong:
- * Returns: (transfer none):
  */
 typedef gulong (* CallbackTestsCallbackReturnUlong) (void);
 
@@ -234,7 +218,6 @@ callback_tests_return_gulong (CallbackTestsCallbackReturnUlong callback);
 
 /**
  * CallbackTestsCallbackReturnSize:
- * Returns: (transfer none):
  */
 typedef gsize (* CallbackTestsCallbackReturnSize) (void);
 
@@ -244,7 +227,6 @@ callback_tests_return_gsize (CallbackTestsCallbackReturnSize callback);
 
 /**
  * CallbackTestsCallbackReturnSsize:
- * Returns: (transfer none):
  */
 typedef gssize (* CallbackTestsCallbackReturnSsize) (void);
 
@@ -274,7 +256,6 @@ callback_tests_return_guintptr (CallbackTestsCallbackReturnUintPtr callback);
 
 /**
  * CallbackTestsCallbackReturnFloat:
- * Returns: (transfer none):
  */
 typedef gfloat (* CallbackTestsCallbackReturnFloat) (void);
 
@@ -284,7 +265,6 @@ callback_tests_return_gfloat (CallbackTestsCallbackReturnFloat callback);
 
 /**
  * CallbackTestsCallbackReturnDouble:
- * Returns: (transfer none):
  */
 typedef gdouble (* CallbackTestsCallbackReturnDouble) (void);
 
@@ -294,7 +274,6 @@ callback_tests_return_gdouble (CallbackTestsCallbackReturnDouble callback);
 
 /**
  * CallbackTestsCallbackReturnUnichar:
- * Returns: (transfer none):
  */
 typedef gunichar (* CallbackTestsCallbackReturnUnichar) (void);
 
@@ -304,7 +283,6 @@ callback_tests_return_gunichar (CallbackTestsCallbackReturnUnichar callback);
 
 /**
  * CallbackTestsCallbackReturnGType:
- * Returns: (transfer none):
  */
 typedef GType (* CallbackTestsCallbackReturnGType) (void);
 
