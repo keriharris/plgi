@@ -1357,7 +1357,7 @@ cache_callable_args_metadata(PLGICallableInfo *func_info,
   PLGIBaseArgInfo *base_args_info;
   PLGIBaseArgInfo *base_arg_info;
   PLGIArgInfo *arg_info;
-  GICallbackInfo *function_info;
+  GICallableInfo *function_info;
   GITypeInfo *type_info;
   GITypeTag type_tag;
   gint n_args, in_pos, out_pos;
