@@ -165,8 +165,7 @@ plgi_term_to_object(term_t             t,
 
   *object = blob->data;
 
-  if ( arg_info->direction != GI_DIRECTION_OUT &&
-       arg_info->transfer != GI_TRANSFER_NOTHING )
+  if ( arg_info->transfer != GI_TRANSFER_NOTHING )
   { if ( blob->blob_type == PLGI_BLOB_GOBJECT )
     { g_object_ref(blob->data);
     }
@@ -219,8 +218,7 @@ plgi_object_to_term(gpointer           object,
   { return FALSE;
   }
 
-  if ( arg_info->direction == GI_DIRECTION_OUT &&
-       arg_info->transfer == GI_TRANSFER_NOTHING )
+  if ( arg_info->transfer == GI_TRANSFER_NOTHING )
   { if ( blob_type == PLGI_BLOB_GOBJECT )
     { g_object_ref_sink(object);
     }

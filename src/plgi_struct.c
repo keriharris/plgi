@@ -149,8 +149,7 @@ plgi_term_to_struct(term_t             t,
     return FALSE;
   }
 
-  if ( arg_info->direction != GI_DIRECTION_OUT &&
-       arg_info->transfer != GI_TRANSFER_NOTHING )
+  if ( arg_info->transfer != GI_TRANSFER_NOTHING )
   { blob->magic = 0x0;
   }
 
@@ -212,8 +211,7 @@ plgi_struct_to_term(gpointer           struct_,
   { return FALSE;
   }
 
-  if ( arg_info->direction == GI_DIRECTION_OUT &&
-       arg_info->transfer == GI_TRANSFER_NOTHING )
+  if ( arg_info->transfer == GI_TRANSFER_NOTHING )
   { if ( blob_type == PLGI_BLOB_GVARIANT )
     { g_variant_ref_sink(data);
     }

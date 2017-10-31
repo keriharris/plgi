@@ -100,8 +100,7 @@ plgi_interface_to_term(gpointer              interface,
   { return FALSE;
   }
 
-  if ( arg_info->direction == GI_DIRECTION_OUT &&
-       arg_info->transfer == GI_TRANSFER_NOTHING )
+  if ( arg_info->transfer == GI_TRANSFER_NOTHING )
   { if ( blob_type == PLGI_BLOB_GOBJECT )
     { g_object_ref_sink(interface);
     }
