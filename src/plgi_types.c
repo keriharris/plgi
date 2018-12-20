@@ -732,23 +732,19 @@ plgi_term_to_filename(term_t t, gchar **v)
 gboolean
 plgi_filename_to_term(gchar *v, term_t t)
 { gchar *s;
+  GError *error = NULL;
 
   PLGI_debug("    filename: %s -->  term: 0x%lx", v, t);
 
   if ( !v )
   { return plgi_put_null(t);
   }
-  if ( !*v )
-  { GError *error = NULL;
-    s = g_filename_to_utf8(v, -1, NULL, NULL, &error);
-    if ( !*s )
-    { plgi_raise_gerror(error);
-      g_error_free(error);
-      return FALSE;
-    }
-    PL_put_atom_chars(t, s);
-    return TRUE;
+  s = g_filename_to_utf8(v, -1, NULL, NULL, &error);
+  if ( !*s )
+  { plgi_raise_gerror(error);
+    g_error_free(error);
+    return FALSE;
   }
 
-  return PL_unify_chars(t, PL_ATOM|REP_UTF8, -1, v);
+  return PL_unify_chars(t, PL_ATOM|REP_UTF8, -1, s);
 }
