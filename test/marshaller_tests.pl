@@ -2690,27 +2690,33 @@ test(gi_marshalling_tests_filename_list_return) :-
 	gi_marshalling_tests_filename_list_return(List),
 	assertion(List == []).
 
-test(gi_marshalling_tests_utf8_to_filename) :-
-	Atom = 'testäø.txt',
-	g_filename_from_utf8(Atom, -1, _, FilenameCodes),
-	assertion(FilenameCodes == [0x74, 0x65, 0x73, 0x74, 0xc3, 0xa4, 0xc3, 0xb8, 0x2e, 0x74, 0x78, 0x74]).
+test(gi_marshalling_tests_utf8_to_filename, [ setup(( setlocale(all, OldLocale, 'en_US.utf-8'),
+                                                      setenv('G_FILENAME_ENCODING', 'ISO-8859-1')
+                                                   )),
+                                              cleanup(( setlocale(all, _, OldLocale),
+                                                        unsetenv('G_FILENAME_ENCODING')
+                                                     ))
+                                            ]) :-
+	UTF8 = 'testäø.txt',
+	g_filename_from_utf8(UTF8, -1, BytesRead, BytesWritten, Filename),
+	assertion(BytesRead == 12),
+	assertion(BytesWritten == 10),
+	atom_codes(Filename, FilenameCodes),
+	assertion(FilenameCodes == [116,101,115,116,228,248,46,116,120,116]).
 
-test(gi_marshalling_tests_filename_in, [setup((setlocale(all, OldLocale, 'en_US.utf-8'), mkdtemp(TempDir))), cleanup((rmtree(TempDir), setlocale(all, _, OldLocale)))]) :-
-	format(atom(TestFile), '~w/testäø.txt', [TempDir]),
-	setup_call_cleanup(open(TestFile, write, OutStream),
-	                   format(OutStream, 'PLGI for SWI-Prolog', []),
-	                   close(OutStream)),
-	g_file_get_contents(TestFile, Contents, Result),
-	assertion(Result == true),
-	assertion(atom_codes('PLGI for SWI-Prolog', Contents)).
-
-test(gi_marshalling_tests_filename_out, [setup(setlocale(all, OldLocale, 'en_US.utf-8')), cleanup(setlocale(all, _, OldLocale))]) :-
-	g_dir_make_tmp('testäø.XXXXXX', TempDir),
-	assertion(exists_directory(TempDir)),
-	(   assertion(sub_atom(TempDir, _, _, _, 'testäø.'))
-	->  true
-	),
-	delete_directory(TempDir).
+test(gi_marshalling_tests_filename_to_utf8, [ setup(( setlocale(all, OldLocale, 'en_US.utf-8'),
+                                                      setenv('G_FILENAME_ENCODING', 'ISO-8859-1')
+                                                   )),
+                                              cleanup(( setlocale(all, _, OldLocale),
+                                                        unsetenv('G_FILENAME_ENCODING')
+                                                     ))
+                                            ]) :-
+	Filename = 'testäø.txt',
+	g_filename_to_utf8(Filename, -1, BytesRead, BytesWritten, UTF8),
+	assertion(BytesRead == 10),
+	assertion(BytesWritten == 12),
+	atom_codes(UTF8, UTF8Codes),
+	assertion(UTF8Codes == [116,101,115,116,228,248,46,116,120,116]).
 
 /* error conditions */
 test(gi_marshalling_tests_filename_instantiation_error, [throws(error(instantiation_error, _))]) :-
