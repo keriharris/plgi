@@ -53,6 +53,7 @@ plgi_callback_marshaller(ffi_cif  *cif,
   atom_t name;
   module_t module;
   predicate_t predicate;
+  fid_t fid;
   qid_t qid;
   term_t except;
 
@@ -66,6 +67,8 @@ plgi_callback_marshaller(ffi_cif  *cif,
   callable_info = closure->callback_info;
 
   PLGI_debug("marshalling callback: %s()", PL_atom_chars(callable_info->name));
+
+  fid = PL_open_foreign_frame();
 
   base_args_info = callable_info->args_info;
   n_args = callable_info->n_args;
@@ -294,6 +297,8 @@ plgi_callback_marshaller(ffi_cif  *cif,
     PLGI_debug("  zeroing return_arg. ffi_arg: %p", result);
     plgi_gi_arg_to_ffi_arg(&arg, return_arg_info->arg_info, &result);
   }
+
+  PL_discard_foreign_frame(fid);
 
   if ( closure->scope == GI_SCOPE_TYPE_ASYNC )
   { plgi_cache_in_async_store(closure, plgi_dealloc_callback);

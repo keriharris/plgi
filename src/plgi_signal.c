@@ -48,6 +48,7 @@ void plgi_signal_marshaller(GClosure     *closure,
   atom_t name;
   module_t module;
   predicate_t predicate;
+  fid_t fid;
   qid_t qid;
   term_t except;
 
@@ -68,6 +69,8 @@ void plgi_signal_marshaller(GClosure     *closure,
   if ( n_param_values != n_args )
   { return;
   }
+
+  fid = PL_open_foreign_frame();
 
   args_data = g_malloc0_n(n_args+1, sizeof(*args_data));
   arg_cache = g_malloc0(sizeof(*arg_cache));
@@ -258,6 +261,8 @@ void plgi_signal_marshaller(GClosure     *closure,
   }
 
  cleanup:
+
+  PL_discard_foreign_frame(fid);
 
   plgi_dealloc_arg_cache(arg_cache, TRUE);
   g_free(args_data);

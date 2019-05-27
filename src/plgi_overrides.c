@@ -42,6 +42,7 @@ plgi_idle_marshaller(gpointer data)
   module_t module;
   predicate_t predicate;
   term_t user_data = PL_new_term_ref();
+  fid_t fid;
   qid_t qid;
   term_t except;
 
@@ -52,8 +53,10 @@ plgi_idle_marshaller(gpointer data)
   { return G_SOURCE_REMOVE;
   }
 
+  fid = PL_open_foreign_frame();
+
   if ( !plgi_closure_data_to_term(closure->user_data, user_data) )
-  { return G_SOURCE_REMOVE;
+  { goto cleanup;
   }
   PL_erase(closure->user_data);
 
@@ -80,6 +83,10 @@ plgi_idle_marshaller(gpointer data)
   PLGI_debug("  idle goal retval: %d", ret);
 
   PLGI_debug_trailer;
+
+cleanup:
+
+  PL_discard_foreign_frame(fid);
 
   return G_SOURCE_REMOVE;
 }
