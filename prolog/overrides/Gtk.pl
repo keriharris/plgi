@@ -47,7 +47,7 @@ gtk_builder_connect_signals(Builder, UserData) :-
 	Marshaller = 'Gtk_overrides':gtk_builder_signal_connect_marshaller/7,
 	gtk_builder_connect_signals_full(Builder, Marshaller, UserData).
 
-gtk_builder_signal_connect_marshaller(_Builder, Object, SignalName, HandlerName, _ConnectObject, Flags, UserData) :-
+gtk_builder_signal_connect_marshaller(_Builder, Object, SignalName, HandlerName, ConnectObject, Flags, UserData) :-
 	term_to_atom(HandlerTerm, HandlerName),
 	(   HandlerTerm = _:_/_
 	->  SignalHandler = HandlerTerm
@@ -55,8 +55,12 @@ gtk_builder_signal_connect_marshaller(_Builder, Object, SignalName, HandlerName,
 	->  SignalHandler = HandlerTerm
 	;   SignalHandler = HandlerTerm/_
 	),
+	(   ConnectObject \== {null}
+	->  Data = ConnectObject
+	;   Data = UserData
+	),
 	(   current_predicate(SignalHandler)
-	->  g_signal_connect_data(Object, SignalName, SignalHandler, UserData, Flags, _)
+	->  g_signal_connect_data(Object, SignalName, SignalHandler, Data, Flags, _)
 	).
 
 
