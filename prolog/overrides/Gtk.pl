@@ -48,9 +48,15 @@ gtk_builder_connect_signals(Builder, UserData) :-
 	gtk_builder_connect_signals_full(Builder, Marshaller, UserData).
 
 gtk_builder_signal_connect_marshaller(_Builder, Object, SignalName, HandlerName, _ConnectObject, Flags, UserData) :-
-	(   current_predicate(HandlerName/Arity)
-	->  SignalHandler = HandlerName/Arity,
-	    g_signal_connect_data(Object, SignalName, SignalHandler, UserData, Flags, _)
+	term_to_atom(HandlerTerm, HandlerName),
+	(   HandlerTerm = _:_/_
+	->  SignalHandler = HandlerTerm
+	;   HandlerTerm = _/_
+	->  SignalHandler = HandlerTerm
+	;   SignalHandler = HandlerTerm/_
+	),
+	(   current_predicate(SignalHandler)
+	->  g_signal_connect_data(Object, SignalName, SignalHandler, UserData, Flags, _)
 	).
 
 
