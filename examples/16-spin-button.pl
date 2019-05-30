@@ -9,16 +9,16 @@
 
 :- plgi_use_namespace('Gtk').
 
-on_numeric_toggled(Button, _UserData) :-
+on_numeric_toggled(Button, SpinButton) :-
 	gtk_toggle_button_get_active(Button, IsActive),
-	gtk_spin_button_set_numeric(Button, IsActive).
+	gtk_spin_button_set_numeric(SpinButton, IsActive).
 
-on_ifvalid_toggled(Button, _UserData) :-
+on_ifvalid_toggled(Button, SpinButton) :-
 	(   gtk_toggle_button_get_active(Button, true)
 	->  Policy = 'GTK_UPDATE_IF_VALID'
 	;   Policy = 'GTK_UPDATE_ALWAYS'
 	),
-	gtk_spin_button_set_update_policy(Button, Policy).
+	gtk_spin_button_set_update_policy(SpinButton, Policy).
 
 main :-
 	gtk_window_new('GTK_WINDOW_TOPLEVEL', Window),
@@ -36,7 +36,7 @@ main :-
 	g_signal_connect(NumericButton,
 	                 'toggled',
 	                 on_numeric_toggled/2,
-	                 {null},
+	                 SpinButton,
 	                 _),
 	gtk_box_pack_start(HBox, NumericButton, false, false, 0),
 
@@ -44,7 +44,7 @@ main :-
 	g_signal_connect(IfValidButton,
 	                 'toggled',
 	                 on_ifvalid_toggled/2,
-	                 {null},
+	                 SpinButton,
 	                 _),
 	gtk_box_pack_start(HBox, IfValidButton, false, false, 0),
 
