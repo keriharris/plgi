@@ -72,7 +72,9 @@ plgi_idle_marshaller(gpointer data)
 
   except = PL_exception(qid);
   if ( except )
-  { predicate_t print_message = PL_predicate("print_message", 2, "user");
+  { printf("Unhandled exception in idle goal %s:%s/%zd:\n",
+             PL_atom_chars(PL_module_name(module)), PL_atom_chars(name), arity);
+    predicate_t print_message = PL_predicate("print_message", 2, "user");
     term_t ex_args = PL_new_term_refs(2);
     PL_put_atom(ex_args+0, PL_new_atom("error"));
     PL_put_term(ex_args+1, except);
