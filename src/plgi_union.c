@@ -205,7 +205,7 @@ plgi_union_to_term(gpointer          union_,
   }
 
   if ( !plgi_put_blob(blob_type, union_info->gtype, union_info->name,
-                      data, t) )
+                      data, t, NULL) )
   { return FALSE;
   }
 
@@ -341,7 +341,7 @@ PLGI_PRED_IMPL(plgi_union_new)
   }
 
   if ( !plgi_put_blob(blob_type, union_info->gtype, union_info->name,
-                      data, union_blob) )
+                      data, union_blob, NULL) )
   { ret = FALSE;
     goto cleanup;
   }

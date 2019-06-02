@@ -167,6 +167,7 @@ plgi_struct_to_term(gpointer           struct_,
   PLGIArgInfo *arg_info = (PLGIArgInfo*)struct_arg_info;
   PLGIBlobType blob_type;
   gpointer data;
+  int is_new;
 
   PLGI_debug("    struct: (%s) %p  --->  term: 0x%lx",
              PL_atom_chars(struct_info->name), struct_, t);
@@ -213,11 +214,11 @@ plgi_struct_to_term(gpointer           struct_,
   }
 
   if ( !plgi_put_blob(blob_type, struct_info->gtype, struct_info->name,
-                      data, t) )
+                      data, t, &is_new) )
   { return FALSE;
   }
 
-  if ( arg_info->transfer == GI_TRANSFER_NOTHING )
+  if ( is_new && arg_info->transfer == GI_TRANSFER_NOTHING )
   { if ( blob_type == PLGI_BLOB_GVARIANT )
     { g_variant_ref_sink(data);
     }
@@ -364,7 +365,7 @@ PLGI_PRED_IMPL(plgi_struct_new)
   }
 
   if ( !plgi_put_blob(blob_type, struct_info->gtype, struct_info->name,
-                      data, struct_blob) )
+                      data, struct_blob, NULL) )
   { ret = FALSE;
     goto cleanup;
   }

@@ -466,10 +466,11 @@ typedef struct PLGIBlob
 gboolean plgi_get_blob(term_t t, PLGIBlob **blob) PLGI_WARN_UNUSED;
 
 gboolean plgi_put_blob(PLGIBlobType blob_type,
-                       GType gtype,
-                       atom_t name,
-                       gpointer data,
-                       term_t t) PLGI_WARN_UNUSED;
+                       GType        gtype,
+                       atom_t       name,
+                       gpointer     data,
+                       term_t       t,
+                       int         *is_new) PLGI_WARN_UNUSED;
 
 gboolean plgi_term_to_gpointer(term_t       t,
                                PLGIArgInfo *arg_info,

@@ -405,7 +405,7 @@ PLGI_PRED_IMPL(plgi_g_value_get_boxed)
       }
     }
     else if ( !plgi_put_blob(PLGI_BLOB_TRANSIENT, gtype, PL_new_atom(g_type_name(gtype)),
-                             gboxed, t) )
+                             gboxed, t, NULL) )
     { goto error;
     }
   }
@@ -491,7 +491,7 @@ PLGI_PRED_IMPL(plgi_g_value_init)
   PLGI_debug("    GValue: %p -->  term: 0x%lx", gvalue, value);
 
   if ( !plgi_put_blob(PLGI_BLOB_BOXED, G_TYPE_VALUE, name,
-                      gvalue, struct_blob) )
+                      gvalue, struct_blob, NULL) )
   { goto error;
   }
 

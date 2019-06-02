@@ -73,6 +73,7 @@ plgi_interface_to_term(gpointer              interface,
   PLGIBlobType blob_type;
   GType gtype;
   atom_t name;
+  int is_new;
 
   PLGI_debug("    GInterface: (%s) %p  --->  term: 0x%lx",
              PL_atom_chars(interface_info->name), interface, t);
@@ -96,11 +97,11 @@ plgi_interface_to_term(gpointer              interface,
 
   name = PL_new_atom(g_type_name(gtype));
 
-  if ( !plgi_put_blob(blob_type, gtype, name, interface, t) )
+  if ( !plgi_put_blob(blob_type, gtype, name, interface, t, &is_new) )
   { return FALSE;
   }
 
-  if ( arg_info->transfer == GI_TRANSFER_NOTHING )
+  if ( is_new && arg_info->transfer == GI_TRANSFER_NOTHING )
   { if ( blob_type == PLGI_BLOB_GOBJECT )
     { g_object_ref_sink(interface);
     }

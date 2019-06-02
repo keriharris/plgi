@@ -191,6 +191,7 @@ plgi_object_to_term(gpointer           object,
   PLGIBlobType blob_type;
   GType gtype;
   atom_t name;
+  int is_new;
 
   PLGI_debug("    GObject: (%s) %p  --->  term: 0x%lx",
              PL_atom_chars(object_info->name), object, t);
@@ -214,11 +215,11 @@ plgi_object_to_term(gpointer           object,
 
   name = PL_new_atom(g_type_name(gtype));
 
-  if ( !plgi_put_blob(blob_type, gtype, name, object, t) )
+  if ( !plgi_put_blob(blob_type, gtype, name, object, t, &is_new) )
   { return FALSE;
   }
 
-  if ( arg_info->transfer == GI_TRANSFER_NOTHING )
+  if ( is_new && arg_info->transfer == GI_TRANSFER_NOTHING )
   { if ( blob_type == PLGI_BLOB_GOBJECT )
     { g_object_ref_sink(object);
     }
@@ -338,7 +339,8 @@ PLGI_PRED_IMPL(plgi_object_new)
   }
 
   blob_type = PLGI_BLOB_GOBJECT;
-  if ( !plgi_put_blob(blob_type, object_gtype, object_name, gobject, object0) )
+  if ( !plgi_put_blob(blob_type, object_gtype, object_name,
+                      gobject, object0, NULL) )
   { ret = FALSE;
     goto cleanup;
   }

@@ -157,9 +157,11 @@ plgi_put_blob(PLGIBlobType blob_type,
               GType        gtype,
               atom_t       name,
               gpointer     data,
-              term_t       t)
+              term_t       t,
+              int         *is_new)
 {
   PLGIBlob blob;
+  int is_new_;
 
   if ( !data )
   { return plgi_put_null(t);
@@ -172,8 +174,24 @@ plgi_put_blob(PLGIBlobType blob_type,
   blob.blob_type = blob_type;
   blob.magic = PLGI_BLOB_MAGIC;
 
-  PL_put_blob(t, &blob, sizeof(PLGIBlob), &plgi_blob);
+  is_new_ = PL_put_blob(t, &blob, sizeof(PLGIBlob), &plgi_blob);
 
+  if ( is_new )
+  { *is_new = is_new_;
+  }
+/*
+  if ( is_new && transfer == GI_TRANSFER_NOTHING )
+  { if ( blob_type == PLGI_BLOB_GOBJECT )
+    { g_object_ref_sink(data);
+    }
+    else if ( blob_type == PLGI_BLOB_GPARAMSPEC )
+    { g_param_spec_ref_sink(data);
+    }
+    if ( blob_type == PLGI_BLOB_GVARIANT )
+    { g_variant_ref_sink(data);
+    }
+  }
+*/
   return TRUE;
 }
 
@@ -236,18 +254,14 @@ plgi_gpointer_to_term(gpointer     data,
                       PLGIArgInfo *arg_info,
                       term_t       t)
 {
-  gboolean is_owned;
-
   PLGI_debug("    gpointer: %p  --->  term: 0x%lx", data, t);
 
   if ( !data )
   { return plgi_put_null(t);
   }
 
-  is_owned = (arg_info->transfer == GI_TRANSFER_EVERYTHING) ? TRUE : FALSE;
-
   if ( !plgi_put_blob(PLGI_BLOB_UNTYPED, G_TYPE_NONE, PL_new_atom("gpointer"),
-                      data, t) )
+                      data, t, NULL) )
   { return FALSE;
   }
 
