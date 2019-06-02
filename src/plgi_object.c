@@ -214,7 +214,7 @@ plgi_object_to_term(gpointer           object,
 
   name = PL_new_atom(g_type_name(gtype));
 
-  if ( !plgi_put_blob(blob_type, gtype, name, FALSE, object, t) )
+  if ( !plgi_put_blob(blob_type, gtype, name, object, t) )
   { return FALSE;
   }
 
@@ -338,7 +338,7 @@ PLGI_PRED_IMPL(plgi_object_new)
   }
 
   blob_type = PLGI_BLOB_GOBJECT;
-  if ( !plgi_put_blob(blob_type, object_gtype, object_name, FALSE, gobject, object0) )
+  if ( !plgi_put_blob(blob_type, object_gtype, object_name, gobject, object0) )
   { ret = FALSE;
     goto cleanup;
   }

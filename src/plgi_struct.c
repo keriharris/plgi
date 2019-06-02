@@ -55,6 +55,7 @@ plgi_struct_get_blob(term_t     t,
   if ( blob0->blob_type != PLGI_BLOB_GVARIANT &&
        blob0->blob_type != PLGI_BLOB_SIMPLE &&
        blob0->blob_type != PLGI_BLOB_BOXED &&
+       blob0->blob_type != PLGI_BLOB_TRANSIENT &&
        blob0->blob_type != PLGI_BLOB_FOREIGN &&
        blob0->blob_type != PLGI_BLOB_OPAQUE )
   { return PL_type_error("struct", t);
@@ -165,7 +166,6 @@ plgi_struct_to_term(gpointer           struct_,
   PLGIStructInfo *struct_info = struct_arg_info->struct_info;
   PLGIArgInfo *arg_info = (PLGIArgInfo*)struct_arg_info;
   PLGIBlobType blob_type;
-  gboolean is_owned;
   gpointer data;
 
   PLGI_debug("    struct: (%s) %p  --->  term: 0x%lx",
@@ -182,19 +182,27 @@ plgi_struct_to_term(gpointer           struct_,
   }
 
   else if ( g_type_is_a(struct_info->gtype, G_TYPE_BOXED ) )
-  { blob_type = PLGI_BLOB_BOXED;
-    if ( arg_info->transfer == GI_TRANSFER_EVERYTHING &&
-         ~arg_info->flags & PLGI_ARG_IS_POINTER )
-    { data = g_boxed_copy(struct_info->gtype, struct_);
+  { if ( arg_info->transfer == GI_TRANSFER_EVERYTHING )
+    { blob_type = PLGI_BLOB_BOXED;
+      if ( ~arg_info->flags & PLGI_ARG_IS_POINTER )
+      { data = g_boxed_copy(struct_info->gtype, struct_);
+      }
+    }
+    else
+    { blob_type = PLGI_BLOB_TRANSIENT;
     }
   }
 
   else if ( struct_info->n_fields > 0 )
-  { blob_type = PLGI_BLOB_SIMPLE;
-    if ( arg_info->transfer == GI_TRANSFER_EVERYTHING &&
-         ~arg_info->flags & PLGI_ARG_IS_POINTER )
-    { data = g_malloc0(struct_info->size);
-      memcpy(data, struct_, struct_info->size);
+  { if ( arg_info->transfer == GI_TRANSFER_EVERYTHING )
+    { blob_type = PLGI_BLOB_SIMPLE;
+      if ( ~arg_info->flags & PLGI_ARG_IS_POINTER )
+      { data = g_malloc0(struct_info->size);
+        memcpy(data, struct_, struct_info->size);
+      }
+    }
+    else
+    { blob_type = PLGI_BLOB_TRANSIENT;
     }
   }
 
@@ -204,10 +212,8 @@ plgi_struct_to_term(gpointer           struct_,
   { blob_type = PLGI_BLOB_OPAQUE;
   }
 
-  is_owned = (arg_info->transfer == GI_TRANSFER_EVERYTHING) ? TRUE : FALSE;
-
   if ( !plgi_put_blob(blob_type, struct_info->gtype, struct_info->name,
-                      is_owned, data, t) )
+                      data, t) )
   { return FALSE;
   }
 
@@ -357,7 +363,7 @@ PLGI_PRED_IMPL(plgi_struct_new)
     data = struct0;
   }
 
-  if ( !plgi_put_blob(blob_type, struct_info->gtype, struct_info->name, TRUE,
+  if ( !plgi_put_blob(blob_type, struct_info->gtype, struct_info->name,
                       data, struct_blob) )
   { ret = FALSE;
     goto cleanup;

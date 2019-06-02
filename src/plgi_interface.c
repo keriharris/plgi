@@ -96,7 +96,7 @@ plgi_interface_to_term(gpointer              interface,
 
   name = PL_new_atom(g_type_name(gtype));
 
-  if ( !plgi_put_blob(blob_type, gtype, name, FALSE, interface, t) )
+  if ( !plgi_put_blob(blob_type, gtype, name, interface, t) )
   { return FALSE;
   }
 

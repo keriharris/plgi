@@ -449,6 +449,7 @@ typedef enum
   PLGI_BLOB_GVARIANT,
   PLGI_BLOB_SIMPLE,
   PLGI_BLOB_BOXED,
+  PLGI_BLOB_TRANSIENT,
   PLGI_BLOB_FOREIGN,
   PLGI_BLOB_OPAQUE,
   PLGI_BLOB_UNTYPED
@@ -458,7 +459,6 @@ typedef struct PLGIBlob
 { gint         magic;
   gpointer     data;
   atom_t       name;
-  gboolean     is_owned;
   GType        gtype;
   PLGIBlobType blob_type;
 } PLGIBlob;
@@ -468,7 +468,6 @@ gboolean plgi_get_blob(term_t t, PLGIBlob **blob) PLGI_WARN_UNUSED;
 gboolean plgi_put_blob(PLGIBlobType blob_type,
                        GType gtype,
                        atom_t name,
-                       gboolean is_owned,
                        gpointer data,
                        term_t t) PLGI_WARN_UNUSED;
 

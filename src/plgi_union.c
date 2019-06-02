@@ -54,6 +54,7 @@ plgi_union_get_blob(term_t     t,
 
   if ( blob0->blob_type != PLGI_BLOB_SIMPLE &&
        blob0->blob_type != PLGI_BLOB_BOXED &&
+       blob0->blob_type != PLGI_BLOB_TRANSIENT &&
        blob0->blob_type != PLGI_BLOB_OPAQUE )
   { return PL_type_error("union", t);
   }
@@ -163,7 +164,6 @@ plgi_union_to_term(gpointer          union_,
   PLGIUnionInfo *union_info = union_arg_info->union_info;
   PLGIArgInfo *arg_info = (PLGIArgInfo*)union_arg_info;
   PLGIBlobType blob_type;
-  gboolean is_owned;
   gpointer data;
 
   PLGI_debug("    union: (%s) %p  --->  term: 0x%lx",
@@ -176,19 +176,27 @@ plgi_union_to_term(gpointer          union_,
   data = union_;
 
   if ( g_type_is_a(union_info->gtype, G_TYPE_BOXED ) )
-  { blob_type = PLGI_BLOB_BOXED;
-    if ( arg_info->transfer == GI_TRANSFER_EVERYTHING &&
-         ~arg_info->flags & PLGI_ARG_IS_POINTER )
-    { data = g_boxed_copy(union_info->gtype, union_);
+  { if ( arg_info->transfer == GI_TRANSFER_EVERYTHING )
+    { blob_type = PLGI_BLOB_BOXED;
+      if ( ~arg_info->flags & PLGI_ARG_IS_POINTER )
+      { data = g_boxed_copy(union_info->gtype, union_);
+      }
+    }
+    else
+    { blob_type = PLGI_BLOB_TRANSIENT;
     }
   }
 
   else if ( union_info->n_fields > 0 )
-  { blob_type = PLGI_BLOB_SIMPLE;
-    if ( arg_info->transfer == GI_TRANSFER_EVERYTHING &&
-         ~arg_info->flags & PLGI_ARG_IS_POINTER )
-    { data = g_malloc0(union_info->size);
-      memcpy(data, union_, union_info->size);
+  { if ( arg_info->transfer == GI_TRANSFER_EVERYTHING )
+    { blob_type = PLGI_BLOB_SIMPLE;
+      if ( ~arg_info->flags & PLGI_ARG_IS_POINTER )
+      { data = g_malloc0(union_info->size);
+        memcpy(data, union_, union_info->size);
+      }
+    }
+    else
+    { blob_type = PLGI_BLOB_TRANSIENT;
     }
   }
 
@@ -196,10 +204,8 @@ plgi_union_to_term(gpointer          union_,
   { blob_type = PLGI_BLOB_OPAQUE;
   }
 
-  is_owned = (arg_info->transfer == GI_TRANSFER_EVERYTHING) ? TRUE : FALSE;
-
   if ( !plgi_put_blob(blob_type, union_info->gtype, union_info->name,
-                      is_owned, data, t) )
+                      data, t) )
   { return FALSE;
   }
 
@@ -334,7 +340,7 @@ PLGI_PRED_IMPL(plgi_union_new)
     data = union0;
   }
 
-  if ( !plgi_put_blob(blob_type, union_info->gtype, union_info->name, TRUE,
+  if ( !plgi_put_blob(blob_type, union_info->gtype, union_info->name,
                       data, union_blob) )
   { ret = FALSE;
     goto cleanup;

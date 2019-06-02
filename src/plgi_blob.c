@@ -59,17 +59,17 @@ gint release_plgi_blob(atom_t a)
     }
 
     case PLGI_BLOB_SIMPLE:
-    { if ( blob->is_owned )
-      { g_free(blob->data);
-      }
+    { g_free(blob->data);
       break;
     }
 
     case PLGI_BLOB_BOXED:
-    { if ( blob->is_owned )
-      { g_boxed_free(blob->gtype, blob->data);
-      }
+    { g_boxed_free(blob->gtype, blob->data);
       break;
+    }
+
+    case PLGI_BLOB_TRANSIENT:
+    { break;
     }
 
     case PLGI_BLOB_FOREIGN:
@@ -156,7 +156,6 @@ gboolean
 plgi_put_blob(PLGIBlobType blob_type,
               GType        gtype,
               atom_t       name,
-              gboolean     is_owned,
               gpointer     data,
               term_t       t)
 {
@@ -169,7 +168,6 @@ plgi_put_blob(PLGIBlobType blob_type,
   memset(&blob, 0, sizeof(PLGIBlob));
   blob.data = data;
   blob.name = name;
-  blob.is_owned = is_owned;
   blob.gtype = gtype;
   blob.blob_type = blob_type;
   blob.magic = PLGI_BLOB_MAGIC;
@@ -249,7 +247,7 @@ plgi_gpointer_to_term(gpointer     data,
   is_owned = (arg_info->transfer == GI_TRANSFER_EVERYTHING) ? TRUE : FALSE;
 
   if ( !plgi_put_blob(PLGI_BLOB_UNTYPED, G_TYPE_NONE, PL_new_atom("gpointer"),
-                      is_owned, data, t) )
+                      data, t) )
   { return FALSE;
   }
 
