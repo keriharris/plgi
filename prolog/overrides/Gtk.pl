@@ -21,7 +21,12 @@
             gtk_builder_add_from_string/3,
             gtk_builder_add_objects_from_string/4,
             gtk_builder_connect_signals/2,
+            gtk_dialog_new_with_buttons/5,
+            gtk_file_chooser_dialog_new/5,
             gtk_list_store_new/2,
+            gtk_message_dialog_format_secondary_markup/2,
+            gtk_message_dialog_format_secondary_text/2,
+            gtk_message_dialog_new/6,
             gtk_tree_store_new/2
           ]).
 
@@ -65,9 +70,88 @@ gtk_builder_signal_connect_marshaller(_Builder, Object, SignalName, HandlerName,
 
 
 
+/* GtkDialog */
+gtk_dialog_new_with_buttons(Title, Parent, Flags, Buttons, Dialog) :-
+	gtk_dialog_new(Dialog),
+	(   Title \== {null}
+	->  gtk_window_set_title(Dialog, Title)
+	;   true
+	),
+	(   Parent \== {null}
+	->  gtk_window_set_transient_for(Dialog, Parent)
+	;   true
+	),
+	(   memberchk('GTK_DIALOG_USE_HEADER_BAR', Flags)
+	->  g_object_set_property(Dialog, 'use-header-bar', true)
+	;   true
+	),
+	(   memberchk('GTK_DIALOG_MODAL', Flags)
+	->  gtk_window_set_modal(Dialog, true)
+	;   true
+	),
+	(   memberchk('GTK_DIALOG_DESTROY_WITH_PARENT', Flags)
+	->  gtk_window_set_destroy_with_parent(Dialog, true)
+	;   true
+	),
+	forall(member(Text-ResponseId, Buttons),
+	       gtk_dialog_add_button(Dialog, Text, ResponseId, _)).
+
+
+
+/* GtkFileChooserDialog */
+gtk_file_chooser_dialog_new(Title, Parent, Action, Buttons, Dialog) :-
+	g_object_new('GtkFileChooserDialog',
+	             ['title'=Title,
+	              'action'=Action],
+	             Dialog),
+	g_object_ref(Dialog, _), % Refbump to offset eventual gtk_widget_destroy/1
+	(   Parent \== {null}
+	->  gtk_window_set_transient_for(Dialog, Parent)
+	;   true
+	),
+	forall(member(Text-ResponseId, Buttons),
+	       gtk_dialog_add_button(Dialog, Text, ResponseId, _)).
+
+
+
 /* GtkListStore */
 gtk_list_store_new(Types, ListStore) :-
 	gtk_list_store_newv(Types, ListStore).
+
+
+
+/* GtkMessageDialog */
+gtk_message_dialog_new(Parent, Flags, MessageType, Buttons, Message, Dialog) :-
+	g_object_new('GtkMessageDialog',
+	             ['use-header-bar'=0,
+	              'message-type'=MessageType,
+	              'buttons'=Buttons],
+	             Dialog),
+	g_object_ref(Dialog, _), % Refbump to offset eventual gtk_widget_destroy/1
+	(   Message \== {null}
+	->  g_object_set_property(Dialog, 'text', Message)
+	;   true
+	),
+	(   Parent \== {null}
+	->  gtk_window_set_transient_for(Dialog, Parent)
+	;   true
+	),
+	(   memberchk('GTK_DIALOG_MODAL', Flags)
+	->  gtk_window_set_modal(Dialog, true)
+	;   true
+	),
+	(   memberchk('GTK_DIALOG_DESTROY_WITH_PARENT', Flags)
+	->  gtk_window_set_destroy_with_parent(Dialog, true)
+	;   true
+	).
+
+gtk_message_dialog_format_secondary_text(Dialog, Text) :-
+	g_object_set_property(Dialog, 'secondary-text', Text),
+	g_object_set_property(Dialog, 'secondary-use-markup', false).
+
+gtk_message_dialog_format_secondary_markup(Dialog, Markup) :-
+	g_object_set_property(Dialog, 'secondary-text', Markup),
+	g_object_set_property(Dialog, 'secondary-use-markup', true).
 
 
 
