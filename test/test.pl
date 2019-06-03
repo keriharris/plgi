@@ -22,6 +22,9 @@
 :- asserta(file_search_path(library, '../prolog')).
 :- asserta(file_search_path(plgi, '../prolog/overrides')).
 
+:- multifile prolog:message/3.
+prolog:message(plgi_warning(Message)) --> [].
+
 :- use_module(library(plgi)).
 :- use_module(library(plunit)).
 
