@@ -17,18 +17,17 @@ dialog_type('QUESTION', 'GTK_MESSAGE_QUESTION', 'GTK_BUTTONS_YES_NO').
 create_message_dialog(DialogType, Parent, Dialog) :-
 	dialog_type(DialogType, MessageType, ButtonsType), !,
 
-	g_object_new('GtkMessageDialog',
-	             ['message-type'=MessageType, 'buttons'=ButtonsType],
-	             Dialog),
-
 	format(atom(Text), 'This is a ~w MessageDialog', [DialogType]),
-	g_object_set_property(Dialog, 'text', Text),
 	SecondaryText = 'And this is the secondary text that explains \c
                          things.', 
-	g_object_set_property(Dialog, 'secondary-text', SecondaryText),
 
-	gtk_window_set_transient_for(Dialog, Parent),
-	gtk_window_set_destroy_with_parent(Dialog, true).
+	gtk_message_dialog_new(Parent,
+	                       ['GTK_DIALOG_DESTROY_WITH_PARENT'],
+	                       MessageType,
+	                       ButtonsType,
+	                       Text,
+	                       Dialog),
+	gtk_message_dialog_format_secondary_text(Dialog, SecondaryText).
 
 on_info_clicked(_Button, Window) :-
 	create_message_dialog('INFO', Window, Dialog),
