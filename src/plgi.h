@@ -843,6 +843,9 @@ gboolean plgi_raise_error(gchar *message);
 gboolean plgi_raise_error__va(gchar *fmt, ...);
 gboolean plgi_raise_gerror(GError *error);
 
+gboolean plgi_print_warning(gchar *message);
+gboolean plgi_print_warning__va(gchar *fmt, ...);
+
 
 
                 /*******************************

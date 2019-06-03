@@ -85,3 +85,40 @@ plgi_raise_gerror(GError *error)
   }
   return PL_raise_exception(except);
 }
+
+
+gboolean
+plgi_print_warning(gchar *message)
+{
+  PLGI_debug("!!! printing warning: %s", message);
+
+  predicate_t print_message = PL_predicate("print_message", 2, "user");
+  term_t warning_args = PL_new_term_refs(2);
+  term_t warning = PL_new_term_ref();
+
+  if ( !PL_unify_term(warning,
+                      PL_FUNCTOR_CHARS, "plgi_warning", 1,
+                        PL_UTF8_CHARS, message) )
+  { return FALSE;
+  }
+
+  PL_put_atom(warning_args+0, PL_new_atom("warning"));
+  PL_put_term(warning_args+1, warning);
+  PL_call_predicate(NULL, PL_Q_NODEBUG|PL_Q_CATCH_EXCEPTION, print_message, warning_args);
+
+  return TRUE;
+}
+
+
+gboolean
+plgi_print_warning__va(gchar *fmt, ...)
+{
+  gchar message[1024];
+
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(message, sizeof(message), fmt, args);
+  va_end(args);
+
+  return plgi_print_warning(message);
+}

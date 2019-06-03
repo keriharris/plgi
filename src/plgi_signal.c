@@ -158,11 +158,14 @@ void plgi_signal_marshaller(GClosure     *closure,
 
   except = PL_exception(qid);
   if ( except )
-  { printf("Unhandled exception in signal handler %s:%s/%zd:\n",
-             PL_atom_chars(PL_module_name(module)), PL_atom_chars(name), arity);
+  {
+    plgi_print_warning__va("Unhandled exception in signal handler %s:%s/%zd",
+                           PL_atom_chars(PL_module_name(module)),
+                           PL_atom_chars(name), arity);
+
     predicate_t print_message = PL_predicate("print_message", 2, "user");
     term_t ex_args = PL_new_term_refs(2);
-    PL_put_atom(ex_args+0, PL_new_atom("error"));
+    PL_put_atom(ex_args+0, PL_new_atom("warning"));
     PL_put_term(ex_args+1, except);
     PL_call_predicate(module, PL_Q_NODEBUG|PL_Q_CATCH_EXCEPTION, print_message, ex_args);
     PL_clear_exception();

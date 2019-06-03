@@ -95,6 +95,9 @@ prolog:error_message(plgi_error(Message)) -->
 prolog:error_message(glib_error(Domain, Code, Message)) -->
 	[ 'GLib Error: [~w:~w] ~w'-[Domain, Code, Message] ].
 
+prolog:message(plgi_warning(Message)) -->
+	[ 'PLGI Warning: ~w'-[Message] ].
+
 
 plgi_overrides_module('GLib',    'GLib_overrides').
 plgi_overrides_module('GObject', 'GObject_overrides').
