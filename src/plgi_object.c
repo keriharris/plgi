@@ -249,7 +249,8 @@ PLGI_PRED_IMPL(plgi_object_new)
   PLGIObjectInfo *object_info;
   GObject *gobject = NULL;
   GType object_gtype;
-  GParameter *parameters = NULL;
+  const char **names = NULL;
+  GValue *gvalues = NULL;
   PLGIArgCache *arg_cache = NULL;
   PLGIBlobType blob_type;
   atom_t object_name, property_name;
@@ -276,7 +277,8 @@ PLGI_PRED_IMPL(plgi_object_new)
   }
 
   n_parameters = len;
-  parameters = g_malloc0_n(n_parameters, sizeof(*parameters));
+  names = g_malloc0_n(n_parameters, sizeof(*names));
+  gvalues = g_malloc0_n(n_parameters, sizeof(*gvalues));
   arg_cache = g_malloc0(sizeof(*arg_cache));
   arg_cache->id = plgi_cache_id();
 
@@ -287,18 +289,18 @@ PLGI_PRED_IMPL(plgi_object_new)
   {
     PLGIPropertyInfo *property_info;
     GIArgument arg;
-    GParameter *parameter;
+    const char **name;
     GValue *gvalue;
     term_t prop_name = PL_new_term_ref();
     term_t prop_value = PL_new_term_ref();
-    atom_t name;
+    atom_t eqname;
     gsize arity;
 
-    parameter = parameters + i;
-    gvalue = &parameter->value;
+    name = names + i;
+    gvalue = gvalues + i;
 
-    if ( !( PL_get_name_arity(head, &name, &arity) &&
-            name == ATOM_equals && arity == 2 ) )
+    if ( !( PL_get_name_arity(head, &eqname, &arity) &&
+            eqname == ATOM_equals && arity == 2 ) )
     { ret = PL_type_error("property field", head);
       goto cleanup;
     }
@@ -309,7 +311,7 @@ PLGI_PRED_IMPL(plgi_object_new)
       goto cleanup;
     }
 
-    parameter->name = PL_atom_chars(property_name);
+    *name = PL_atom_chars(property_name);
 
     if ( !plgi_object_property_info(object_name, property_name, &property_info) )
     { ret = FALSE;
@@ -332,7 +334,7 @@ PLGI_PRED_IMPL(plgi_object_new)
   }
 
   object_gtype = g_type_from_name(PL_atom_chars(object_name));
-  gobject = g_object_newv(object_gtype, n_parameters, parameters);
+  gobject = g_object_new_with_properties(object_gtype, n_parameters, names, gvalues);
 
   if ( g_object_is_floating(gobject) )
   { g_object_ref_sink(gobject);
@@ -355,7 +357,8 @@ PLGI_PRED_IMPL(plgi_object_new)
   { if ( gobject ) g_clear_object(&gobject);
   }
 
-  if ( parameters ) g_free(parameters);
+  if ( names ) g_free(names);
+  if ( gvalues ) g_free(gvalues);
   if ( arg_cache ) plgi_dealloc_arg_cache(arg_cache, !ret);
 
   return ret;
