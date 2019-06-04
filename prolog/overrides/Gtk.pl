@@ -82,7 +82,7 @@ gtk_dialog_new_with_buttons(Title, Parent, Flags, Buttons, Dialog) :-
 	;   true
 	),
 	(   memberchk('GTK_DIALOG_USE_HEADER_BAR', Flags)
-	->  g_object_set_property(Dialog, 'use-header-bar', true)
+	->  g_object_set_property(Dialog, 'use-header-bar', 1)
 	;   true
 	),
 	(   memberchk('GTK_DIALOG_MODAL', Flags)
