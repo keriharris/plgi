@@ -161,4 +161,6 @@ gtk_tree_store_new(Types, ListStore) :-
 
 
 
-:- 'Gtk':gtk_init_check([], _, _).
+:- ( current_prolog_flag(os_argv, Argv),
+     'Gtk':gtk_init_check(Argv, _, _)
+   ).
