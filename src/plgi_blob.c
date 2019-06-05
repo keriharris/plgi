@@ -29,6 +29,45 @@
 
 #define PLGI_BLOB_MAGIC 0x23f56c77
 
+typedef struct PLGIUnrefInfo
+{ atom_t   name;
+  GType    gtype;
+  gpointer data;
+} PLGIUnrefInfo;
+
+gboolean
+plgi_unref_blob(gpointer user_data)
+{
+  PLGIUnrefInfo *info = user_data;
+
+  PLGI_debug("[GC] unref: <%s>%p", PL_atom_chars(info->name), info->data);
+
+  if ( g_type_is_a( info->gtype, G_TYPE_OBJECT ) )
+  { g_object_unref(info->data);
+  }
+
+  else if ( g_type_is_a( info->gtype, G_TYPE_PARAM ) )
+  { g_param_spec_unref(info->data);
+  }
+
+  else if ( g_type_is_a( info->gtype, G_TYPE_VARIANT ) )
+  { g_variant_unref(info->data);
+  }
+
+  else if ( g_type_is_a( info->gtype, G_TYPE_BOXED ) )
+  { g_boxed_free(info->gtype, info->data);
+  }
+
+  else
+  { g_assert_not_reached();
+  }
+
+  g_free(info);
+
+  return G_SOURCE_REMOVE;
+}
+
+
 gint release_plgi_blob(atom_t a)
 {
   PLGIBlob *blob = PL_blob_data(a, NULL, NULL);
@@ -44,27 +83,19 @@ gint release_plgi_blob(atom_t a)
   switch ( blob->blob_type )
   {
     case PLGI_BLOB_GOBJECT:
-    { g_object_unref(blob->data);
-      break;
-    }
-
     case PLGI_BLOB_GPARAMSPEC:
-    { g_param_spec_unref(blob->data);
-      break;
-    }
-
     case PLGI_BLOB_GVARIANT:
-    { g_variant_unref(blob->data);
+    case PLGI_BLOB_BOXED:
+    { PLGIUnrefInfo *info = g_malloc(sizeof(*info));
+      info->name = blob->name;
+      info->gtype = blob->gtype;
+      info->data = blob->data;
+      g_idle_add(plgi_unref_blob, info);
       break;
     }
 
     case PLGI_BLOB_SIMPLE:
     { g_free(blob->data);
-      break;
-    }
-
-    case PLGI_BLOB_BOXED:
-    { g_boxed_free(blob->gtype, blob->data);
       break;
     }
 
@@ -74,9 +105,6 @@ gint release_plgi_blob(atom_t a)
     }
 
     case PLGI_BLOB_OPAQUE:
-    { break;
-    }
-
     case PLGI_BLOB_UNTYPED:
     { break;
     }
