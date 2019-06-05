@@ -55,7 +55,6 @@ plgi_struct_get_blob(term_t     t,
   if ( blob0->blob_type != PLGI_BLOB_GVARIANT &&
        blob0->blob_type != PLGI_BLOB_SIMPLE &&
        blob0->blob_type != PLGI_BLOB_BOXED &&
-       blob0->blob_type != PLGI_BLOB_TRANSIENT &&
        blob0->blob_type != PLGI_BLOB_FOREIGN &&
        blob0->blob_type != PLGI_BLOB_OPAQUE )
   { return PL_type_error("struct", t);
@@ -183,27 +182,21 @@ plgi_struct_to_term(gpointer           struct_,
   }
 
   else if ( g_type_is_a(struct_info->gtype, G_TYPE_BOXED ) )
-  { if ( arg_info->transfer == GI_TRANSFER_EVERYTHING )
-    { blob_type = PLGI_BLOB_BOXED;
-      if ( ~arg_info->flags & PLGI_ARG_IS_POINTER )
-      { data = g_boxed_copy(struct_info->gtype, struct_);
-      }
-    }
-    else
-    { blob_type = PLGI_BLOB_TRANSIENT;
+  { blob_type = PLGI_BLOB_BOXED;
+    if ( (  arg_info->transfer == GI_TRANSFER_NOTHING &&
+           ~arg_info->flags & PLGI_ARG_IS_CALLER_ALLOCATES ) ||
+         ( ~arg_info->flags & PLGI_ARG_IS_POINTER ) )
+    { data = g_boxed_copy(struct_info->gtype, struct_);
     }
   }
 
   else if ( struct_info->n_fields > 0 )
-  { if ( arg_info->transfer == GI_TRANSFER_EVERYTHING )
-    { blob_type = PLGI_BLOB_SIMPLE;
-      if ( ~arg_info->flags & PLGI_ARG_IS_POINTER )
-      { data = g_malloc0(struct_info->size);
-        memcpy(data, struct_, struct_info->size);
-      }
-    }
-    else
-    { blob_type = PLGI_BLOB_TRANSIENT;
+  { blob_type = PLGI_BLOB_SIMPLE;
+    if ( (  arg_info->transfer == GI_TRANSFER_NOTHING &&
+           ~arg_info->flags & PLGI_ARG_IS_CALLER_ALLOCATES ) ||
+         ( ~arg_info->flags & PLGI_ARG_IS_POINTER ) )
+    { data = g_malloc0(struct_info->size);
+      memcpy(data, struct_, struct_info->size);
     }
   }
 

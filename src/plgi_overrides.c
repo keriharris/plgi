@@ -398,14 +398,15 @@ PLGI_PRED_IMPL(plgi_g_value_get_boxed)
     { goto error;
     }
   }
-  else
-  { if ( !gboxed )
-    { if ( !plgi_put_null(t) )
-      { goto error;
-      }
+  else if ( !gboxed )
+  { if ( !plgi_put_null(t) )
+    { goto error;
     }
-    else if ( !plgi_put_blob(PLGI_BLOB_TRANSIENT, gtype, PL_new_atom(g_type_name(gtype)),
-                             gboxed, t, NULL) )
+  }
+  else
+  { gpointer data = g_boxed_copy(gtype, gboxed);
+    if ( !plgi_put_blob(PLGI_BLOB_BOXED, gtype, PL_new_atom(g_type_name(gtype)),
+                        data, t, NULL) )
     { goto error;
     }
   }

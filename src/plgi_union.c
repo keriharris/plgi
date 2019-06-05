@@ -54,7 +54,6 @@ plgi_union_get_blob(term_t     t,
 
   if ( blob0->blob_type != PLGI_BLOB_SIMPLE &&
        blob0->blob_type != PLGI_BLOB_BOXED &&
-       blob0->blob_type != PLGI_BLOB_TRANSIENT &&
        blob0->blob_type != PLGI_BLOB_OPAQUE )
   { return PL_type_error("union", t);
   }
@@ -176,27 +175,21 @@ plgi_union_to_term(gpointer          union_,
   data = union_;
 
   if ( g_type_is_a(union_info->gtype, G_TYPE_BOXED ) )
-  { if ( arg_info->transfer == GI_TRANSFER_EVERYTHING )
-    { blob_type = PLGI_BLOB_BOXED;
-      if ( ~arg_info->flags & PLGI_ARG_IS_POINTER )
-      { data = g_boxed_copy(union_info->gtype, union_);
-      }
-    }
-    else
-    { blob_type = PLGI_BLOB_TRANSIENT;
+  { blob_type = PLGI_BLOB_BOXED;
+    if ( (  arg_info->transfer == GI_TRANSFER_NOTHING &&
+           ~arg_info->flags & PLGI_ARG_IS_CALLER_ALLOCATES ) ||
+         ( ~arg_info->flags & PLGI_ARG_IS_POINTER ) )
+    { data = g_boxed_copy(union_info->gtype, union_);
     }
   }
 
   else if ( union_info->n_fields > 0 )
-  { if ( arg_info->transfer == GI_TRANSFER_EVERYTHING )
-    { blob_type = PLGI_BLOB_SIMPLE;
-      if ( ~arg_info->flags & PLGI_ARG_IS_POINTER )
-      { data = g_malloc0(union_info->size);
-        memcpy(data, union_, union_info->size);
-      }
-    }
-    else
-    { blob_type = PLGI_BLOB_TRANSIENT;
+  { blob_type = PLGI_BLOB_SIMPLE;
+    if ( (  arg_info->transfer == GI_TRANSFER_NOTHING &&
+           ~arg_info->flags & PLGI_ARG_IS_CALLER_ALLOCATES ) ||
+         ( ~arg_info->flags & PLGI_ARG_IS_POINTER ) )
+    { data = g_malloc0(union_info->size);
+      memcpy(data, union_, union_info->size);
     }
   }
 

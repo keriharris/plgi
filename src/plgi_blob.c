@@ -68,10 +68,6 @@ gint release_plgi_blob(atom_t a)
       break;
     }
 
-    case PLGI_BLOB_TRANSIENT:
-    { break;
-    }
-
     case PLGI_BLOB_FOREIGN:
     { chokeme(PLGI_BLOB_FOREIGN);
       break;
