@@ -27,7 +27,8 @@
             gtk_message_dialog_format_secondary_markup/2,
             gtk_message_dialog_format_secondary_text/2,
             gtk_message_dialog_new/6,
-            gtk_tree_store_new/2
+            gtk_tree_store_new/2,
+            gtk_widget_hide_on_delete/4
           ]).
 
 
@@ -158,6 +159,12 @@ gtk_message_dialog_format_secondary_markup(Dialog, Markup) :-
 /* GtkTreeStore */
 gtk_tree_store_new(Types, ListStore) :-
 	gtk_tree_store_newv(Types, ListStore).
+
+
+
+/* GtkWidget */
+gtk_widget_hide_on_delete(Widget, _Event, _UserData, Return) :-
+	gtk_widget_hide_on_delete(Widget, Return).
 
 
 
