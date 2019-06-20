@@ -34,8 +34,8 @@
                  *******************************/
 
 #define PLGI_VERSION_MAJOR 1
-#define PLGI_VERSION_MINOR 0
-#define PLGI_VERSION_MICRO 6
+#define PLGI_VERSION_MINOR 1
+#define PLGI_VERSION_MICRO 0
 
 #define PLGI_VERSION_ENCODE(major, minor, micro) \
           ( (major * 10000) + (minor * 100) + (micro * 1) )
