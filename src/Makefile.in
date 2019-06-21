@@ -22,8 +22,6 @@ QUIET_CC= @echo "   [CC]      $@" 1>&2;
 QUIET_LD= @echo "   [LD]      $@" 1>&2;
 
 PROLOGDIR=../prolog
-SWI_SOLIBDIR=@SWI_SOLIBDIR@
-SWI_PLLIBDIR=@SWI_PLLIBDIR@
 
 CFLAGS+= -Wall -fPIC -I. @SWI_CFLAGS@ @GI_CFLAGS@
 LDFLAGS= -Wall -shared -Wl,-soname=plgi.so @SWI_LIBS@ @GI_LIBS@
@@ -33,6 +31,10 @@ CC=@CC@
 INSTALL=@INSTALL@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=@INSTALL_DATA@
+
+INSTALL_PREFIX=@prefix@/plgi
+INSTALL_SOLIBDIR=$(INSTALL_PREFIX)/lib
+INSTALL_PLLIBDIR=$(INSTALL_PREFIX)/prolog
 
 OBJECTS= plgi.o plgi_argument.o plgi_array.o plgi_blob.o plgi_cache.o plgi_callback.o plgi_debug.o plgi_enum.o plgi_error.o plgi_flag.o plgi_gbytes.o plgi_ghashtable.o plgi_glist.o plgi_gstrv.o plgi_interface.o plgi_namespace.o plgi_object.o plgi_overrides.o plgi_signal.o plgi_struct.o plgi_types.o plgi_union.o plgi_version.o
 
@@ -47,12 +49,13 @@ plgi.so: $(OBJECTS)
 	$(QUIET_CC)$(CC) $(CFLAGS) -o $@ -c $^
 
 install: plgi.so
-	mkdir -p $(DESTDIR)$(SWI_SOLIBDIR)
-	$(INSTALL_PROGRAM) plgi.so $(DESTDIR)$(SWI_SOLIBDIR)
-	$(INSTALL_DATA) $(PROLOGDIR)/plgi.pl $(DESTDIR)$(SWI_PLLIBDIR)
-	mkdir -p $(DESTDIR)$(SWI_PLLIBDIR)/plgi
+	mkdir -p $(DESTDIR)$(INSTALL_SOLIBDIR)
+	$(INSTALL_PROGRAM) plgi.so $(DESTDIR)$(INSTALL_SOLIBDIR)
+	mkdir -p $(DESTDIR)$(INSTALL_PLLIBDIR)
+	$(INSTALL_DATA) $(PROLOGDIR)/plgi.pl $(DESTDIR)$(INSTALL_PLLIBDIR)
+	mkdir -p $(DESTDIR)$(INSTALL_PLLIBDIR)/plgi
 	for f in $(OVERRIDES); do \
-	  $(INSTALL_DATA) $(PROLOGDIR)/overrides/$$f $(DESTDIR)$(SWI_PLLIBDIR)/plgi/; \
+	  $(INSTALL_DATA) $(PROLOGDIR)/overrides/$$f $(DESTDIR)$(INSTALL_PLLIBDIR)/plgi/; \
 	done
 
 clean:

@@ -26,11 +26,6 @@ PKG_CHECK_MODULES(SWI,
     swipl
 )
 
-SWI_BASE=$($PKG_CONFIG --variable=PLBASE swipl)
-SWI_ARCH=$($PKG_CONFIG --variable=PLARCH swipl)
-SWI_SOLIBDIR=$SWI_BASE/lib/$SWI_ARCH
-SWI_PLLIBDIR=$SWI_BASE/library
-
 PKG_CHECK_MODULES(GI,
     glib-2.0
     gio-2.0

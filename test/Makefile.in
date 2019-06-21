@@ -28,7 +28,7 @@ LDFLAGS= -Wall -shared @GI_LIBS@
 
 CC=@CC@
 
-SWIPL=@SWI_BASE@/bin/@SWI_ARCH@/swipl
+SWIPL=swipl
 
 GI_DATADIR= @GI_DATADIR@
 

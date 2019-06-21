@@ -56,9 +56,9 @@ mkdir -p pack-$VERSION/plgi/src
 cp $TOPDIR/src/*.{c,h} pack-$VERSION/plgi/src/
 cp $TOPDIR/src/config.h.in pack-$VERSION/plgi/src/
 cp $TOPDIR/src/Makefile.in pack-$VERSION/plgi/src/
-sed -i -e "s:@SWI_SOLIBDIR@:../\$(PACKSODIR):" \
-       -e "s:@SWI_PLLIBDIR@:../prolog:" \
-       -e "/\$(INSTALL_PROGRAM)/{h;N;N;N;N;N;x}" pack-$VERSION/plgi/src/Makefile.in
+sed -i -e "s:\(INSTALL_SOLIBDIR\)=.*:\1=../\$(PACKSODIR):" \
+       -e "s:\(INSTALL_PLLIBDIR\)=.*:\1=../prolog:" \
+       -e "/\$(INSTALL_PROGRAM)/{h;N;N;N;N;N;N;x}" $PACKDIR/src/Makefile.in
 
 mkdir -p pack-$VERSION/plgi/test
 cp $TOPDIR/test/*.{pl,c,h} pack-$VERSION/plgi/test/
@@ -76,11 +76,7 @@ cp $TOPDIR/LICENSE pack-$VERSION/plgi/
 cp $TOPDIR/VERSION pack-$VERSION/plgi/
 
 cp $TOPDIR/configure.in pack-$VERSION/plgi/
-sed -i -e "/SWI_BASE/d" \
-       -e "/SWI_ARCH/d" \
-       -e "/SWI_SOLIBDIR/d" \
-       -e "/SWI_PLLIBDIR/d" \
-       -e "/PKG_CHECK_MODULES(SWI/{N;N;d}" pack-$VERSION/plgi/configure.in
+sed -i -e "/PKG_CHECK_MODULES(SWI/{N;N;d}" pack-$VERSION/plgi/configure.in
 cp $TOPDIR/aclocal.m4 pack-$VERSION/plgi/
 cp $TOPDIR/install-sh pack-$VERSION/plgi/
 cp $TOPDIR/Makefile.in pack-$VERSION/plgi/
